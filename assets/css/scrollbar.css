@@ -1,0 +1,34 @@
+@tailwind utilities;
+
+@layer utilities {
+  *::-webkit-scrollbar {
+    @apply border-l bg-zinc-200 dark:bg-zinc-900 border-zinc-300 w-[var(--scroll-width-md)];
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    @apply border-4 border-transparent border-solid rounded-full bg-zinc-600 dark:bg-zinc-600 bg-clip-content;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    @apply w-2 border-4 border-transparent border-solid rounded-full bg-zinc-400 dark:bg-zinc-700 bg-clip-content;
+  }
+
+  *::-webkit-scrollbar-corner {
+    @apply bg-zinc-200 dark:bg-zinc-900;
+  }
+
+  @media screen and (max-width: 768px) {
+    *::-webkit-scrollbar {
+      display: none;
+    }
+  }
+  /* For Webkit-based browsers (Chrome, Safari and Opera) */
+  .scrollbar-hide::-webkit-scrollbar {
+    @apply hidden;
+  }
+  /* For IE, Edge and Firefox */
+  .scrollbar-hide {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}
