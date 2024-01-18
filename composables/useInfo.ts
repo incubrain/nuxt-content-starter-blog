@@ -1,5 +1,3 @@
-
-
 const website = reactive({
   name: 'Blog Name',
   nameSlug: 'blog-name',
@@ -10,14 +8,12 @@ const website = reactive({
     name: 'Drew MacGibbon',
     avatar: 'drew-macgibbon.jpg',
     email: 'mac@incubrain.org'
-  }
-  keywords: 'vue3, admin, dashboard, tailwind, vue',
+  },
+  keywords: 'vue3, admin, dashboard, tailwind, vue'
 })
-
-
 
 export default () => {
   return {
-    website,
+    website
   }
 }

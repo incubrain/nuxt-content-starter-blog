@@ -45,7 +45,7 @@
 
 <script setup lang="ts">
 const { personalLinkedin } = useSocial()
-const { info } = useInfo()
+const info = useInfo()
 
 const { width } = useWindowSize()
 const hideAd = ref(false)
