@@ -25,6 +25,7 @@ export const postTagSchema = z.enum([
   // frontend
   'nuxt',
   'vue',
+  'react',
   'typescript',
   // backend
   'nitro',
@@ -49,6 +50,7 @@ export type PostTagsT = z.infer<typeof postTagSchema>
 export const TAGS: PostTagsT[] = [
   'nuxt',
   'vue',
+  'react',
   'typescript',
   'nitro',
   'supabase',

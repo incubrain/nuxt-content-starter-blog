@@ -7,8 +7,8 @@
       class="border border-color rounded-full"
       :src="`images/author/${author.avatar}`"
       :alt="`${author.name.given} ${author.name.surname} is an author on the ${website.name} Blog`"
-      width="44"
-      height="44"
+      width="44px"
+      height="44px"
     />
     <div class="flex flex-col">
       <p class="font-semibold"> {{ author.name.given }} {{ author.name.surname }} </p>

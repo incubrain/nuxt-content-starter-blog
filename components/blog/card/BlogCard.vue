@@ -11,7 +11,7 @@
     <NuxtLink :to="post._path">
       <NuxtImg
         class="rounded-md w-full object-cover aspect-video border border-color"
-        :src="`images/blog/${post.featured_image}`"
+        :src="`images/blog/${post.category}/${post.featured_image}`"
         width="400"
         height="300"
         quality="80"

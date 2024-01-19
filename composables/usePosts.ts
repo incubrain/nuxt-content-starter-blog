@@ -6,7 +6,7 @@ import { postCardSchema, POST_CARD_PROPERTIES, postFullSchema } from '~/types/po
 
 const { categories } = useCatTag()
 
-const postsToFetch = 10
+const postsToFetch = 6
 
 export default () => {
   const toast = useToast()

@@ -8,11 +8,11 @@
         class="rounded-full sm:max-w-[100px] h-full"
         :src="`images/author/${author.avatar}`"
         :alt="`${author.name.full} is an author on the ${website.name} Blog`"
-        sizes="18vw sm:120px"
-        fit="cover"
+        width="100px"
+        height="100px"
       />
       <div class="text-left space-y-1 w-full">
-        <h4 class="font-semibold"> About {{ author.name.full}} </h4>
+        <h4 class="font-semibold"> About {{ author.name.full }} </h4>
         <p class="text-sm">
           {{ author.bio }}
         </p>

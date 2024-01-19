@@ -56,7 +56,7 @@
       <div
         v-if="!noMorePosts[categories.selected.value]"
         ref="sentinel"
-        class="w-full"
+        class="w-full h-4 bg-red-100"
       />
     </ClientOnly>
   </div>
@@ -115,8 +115,10 @@ watchEffect(() => {
 })
 
 const getPostsOnScroll = async () => {
+  console.log('getPostsOnScroll')
   if (!postsLoading) return
   loadingState.value = true
+  console.log('getPostsOnScroll 2')
 
   const { error } = await useAsyncData(
     `posts-${categories.selected.value}`,
@@ -148,7 +150,9 @@ onMounted(() => {
   }
 
   observer = new IntersectionObserver((entries) => {
+    console.log('entries', entries)
     entries.forEach((entry) => {
+      console.log('entry', entry)
       if (entry.isIntersecting) {
         getPostsOnScroll()
       }
