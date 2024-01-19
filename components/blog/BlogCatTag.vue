@@ -2,13 +2,13 @@
   <div>
     <div class="flex flex-wrap gap-4">
       <UBadge
-        :id="`${postlink}-${category}`"
+        :id="`${postLink}-${category}`"
         :label="category"
         :class="`${badgeColor(category)}`"
       />
       <UBadge
         v-for="tag in tags"
-        :key="`${postlink}-${tag}`"
+        :key="`${postLink}-${tag}`"
         :label="tag"
         variant="subtle"
         :color="badgeColor(tag)"
@@ -22,7 +22,7 @@ import type { PostTagsT, PostCategoriesT } from '~/types/posts'
 
 // TODO: Add full post as prop and types for post
 defineProps({
-  postlink: {
+  postLink: {
     type: String,
     required: true
   },
@@ -47,8 +47,6 @@ const badgeColor = (badge: PostCategoriesT | PostTagsT): string => {
       return 'primary'
     case 'backend':
       return 'amber'
-    case 'business':
-      return 'blue'
     case 'projects':
       return 'purple'
 

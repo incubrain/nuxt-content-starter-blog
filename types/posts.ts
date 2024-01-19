@@ -16,9 +16,9 @@ const UUIDSchema = z.string().refine(isUUID, {
 })
 
 // POST CATEGORIES
-export const postCategorySchema = z.enum(['all', 'frontend', 'backend', 'business', 'projects'])
+export const postCategorySchema = z.enum(['all', 'frontend', 'backend', 'projects'])
 export type PostCategoriesT = z.infer<typeof postCategorySchema>
-export const CATEGORIES: PostCategoriesT[] = ['all', 'frontend', 'backend', 'business', 'projects']
+export const CATEGORIES: PostCategoriesT[] = ['all', 'frontend', 'backend', 'projects']
 
 // POST TAGS
 export const postTagSchema = z.enum([
@@ -35,24 +35,12 @@ export const postTagSchema = z.enum([
   // design
   'tailwindcss',
   // general
-  'imagine',
   'learning',
-  'code quality',
+  'code-quality',
   'kindness',
   'testing',
   'productivity',
   // business
-  'marketing',
-  'benefits',
-  'culture',
-  'hiring',
-  'systems',
-  'research',
-  'tools',
-  'salaries',
-  'customers',
-  'community',
-  'future',
   'seo',
   'design',
   'product-review'
@@ -69,22 +57,9 @@ export const TAGS: PostTagsT[] = [
   'ci',
   'tailwindcss',
   'learning',
-  'code quality',
   'testing',
   'productivity',
   'kindness',
-  'culture',
-  'future',
-  'benefits',
-  'hiring',
-  'marketing',
-  'tools',
-  'imagine',
-  'systems',
-  'research',
-  'salaries',
-  'customers',
-  'community',
   'seo',
   'design'
 ]

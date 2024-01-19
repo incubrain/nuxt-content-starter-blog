@@ -2,64 +2,60 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
   app: {
-    layoutTransition: { name: "layout", mode: "out-in" },
+    layoutTransition: { name: 'layout', mode: 'out-in' },
     head: {
       script: [],
-      link: [],
-    },
+      link: []
+    }
   },
 
-  modules: [
-    "@nuxt/content",
-    "@nuxt/image",
-    "@nuxt/ui",
-    "@nuxtjs/seo",
-    "@vueuse/nuxt",
-  ],
+  modules: ['@nuxt/content', '@nuxt/image', '@nuxt/ui', '@nuxtjs/seo', '@vueuse/nuxt'],
 
   site: {
-    url: "your-blog-url.com",
-    name: "Site title SEO",
-    description: "Site description SEO",
-    defaultLocale: "en",
+    url: 'your-blog-url.com',
+    name: 'Site title SEO',
+    description: 'Site description SEO',
+    defaultLocale: 'en',
     trailingSlash: false,
-    titleSeparator: " | ",
-    debug: process.env.NODE_ENV !== "production",
+    titleSeparator: ' | ',
+    debug: process.env.NODE_ENV !== 'production',
     identity: {
-      type: "Organization",
+      type: 'Organization'
     },
-    twitter: "@your-twitter",
+    twitter: '@your-twitter'
   },
 
   ogImage: {
     componentOptions: {
-      global: true,
-    },
+      global: true
+    }
   },
 
   nitro: {
     prerender: {
       crawlLinks: true,
-      routes: ["/"],
-    },
+      routes: ['/']
+    }
   },
 
   typescript: {
     shim: false,
     tsConfig: {
-      exclude: ["node_modules", "dist"],
+      exclude: ['node_modules', 'dist'],
       compilerOptions: {
-        strict: true,
-      },
-    },
+        strict: true
+      }
+    }
   },
 
   colorMode: {
-    classSuffix: "",
+    preference: 'system',
+    fallback: 'light',
+    classSuffix: ''
   },
 
   ui: {
-    icons: ["mdi", "heroicons", "material-symbols"],
+    icons: ['mdi', 'heroicons', 'material-symbols']
   },
 
   // image: {
@@ -70,7 +66,7 @@ export default defineNuxtConfig({
 
   routeRules: {
     // pre-rendered at build time
-    "/**": { prerender: true },
+    '/**': { prerender: true }
   },
 
   ssr: true,
@@ -83,5 +79,5 @@ export default defineNuxtConfig({
     //     dark: "github-dark",
     //   },
     // },
-  },
-});
+  }
+})
