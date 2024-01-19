@@ -30,7 +30,6 @@ export default () => {
     if (category !== 'all') {
       whereOptions.category = category
     }
-    console.log('Fetching Posts')
     try {
       const posts = await queryContent('/blog')
         .where(whereOptions)
@@ -56,7 +55,8 @@ export default () => {
   const getPosts = async ({
     limit = postsToLoad,
     skip = 0,
-    category = categories.selected.value
+    category = categories.selected.value,
+    isShowcase = false
   } = {}): Promise<void | PostCardT[]> => {
     try {
       const newPosts = await fetchPosts({
@@ -65,10 +65,10 @@ export default () => {
         limit
       })
 
-      if (newPosts.length < limit) {
+      if (newPosts.length < limit && !isShowcase) {
         noMorePosts.value[category] = true
-        console.log('All posts fetched', noMorePosts, noMorePosts.value[category])
       }
+
       const validPosts = newPosts.filter((post) =>
         validate.posts(post as PostCardT, postCardSchema)
       )

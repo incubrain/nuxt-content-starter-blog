@@ -26,8 +26,7 @@
     </div>
     <div class="flex flex-col justify-start items-start gap-4 w-full">
       <p class="text-base">
-        I hope you like the blog template, currently I'm looking for contracting work so I can
-        contribute more to the Nuxt ecosystem.
+        I hope you like the blog template, currently I'm looking for contracting work. I've been working with Nuxt and Vue for ~5 years and would like to continue in the ecosystem.
       </p>
       <p class="text-base font-semibold pb-2">Rates: $30 USD PH + GST </p>
       <UButton
