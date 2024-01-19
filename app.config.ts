@@ -21,6 +21,9 @@ export default defineAppConfig({
           solid: 'dark:bg-neutral-950'
         }
       }
+    },
+    notification: {
+      background: 'bg-white dark:bg-black'
     }
   }
 })

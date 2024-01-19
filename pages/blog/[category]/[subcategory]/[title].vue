@@ -14,18 +14,18 @@ import { POST_FULL_PROPERTIES, postFullSchema } from '~/types/posts'
 import type { PostFullT } from '~/types/posts'
 
 const route = useRoute()
+const { isValidPost } = usePosts()
 const { website } = useInfo()
 const category = ref(String(route.params.category))
 const post = ref<PostFullT | undefined>(undefined)
 
-const { validate } = useValidation()
 
 const { error } = await useAsyncData('post', async (): Promise<void> => {
   const p = await queryContent('/blog', category.value)
     .only(POST_FULL_PROPERTIES)
     .where({ _path: route.path })
     .findOne()
-  const validPost = validate.posts(p as PostFullT, postFullSchema)
+  const validPost = isValidPost(p as PostFullT, postFullSchema)
   if (!validPost) return console.error('Post failed to load')
   post.value = p as PostFullT
 })
@@ -33,6 +33,8 @@ const { error } = await useAsyncData('post', async (): Promise<void> => {
 if (error.value) console.error(error.value)
 
 const env = useRuntimeConfig().public
+// watch process.server and trigger a function
+watchEffect
 
 if (post.value) {
   useSeoMeta({

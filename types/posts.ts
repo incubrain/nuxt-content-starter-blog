@@ -69,11 +69,11 @@ export const postCardSchema = z.object({
   id: UUIDSchema,
   title: z
     .string()
-    .min(10, 'Title must be at least 20 char long')
+    .min(20, 'Title must be at least 20 char long')
     .max(70, 'Title has a max length of 70 char'),
   description: z
     .string()
-    .min(1, 'Description must be at least 160 char long')
+    .min(160, 'Description must be at least 160 char long')
     .max(280, 'Description has a max length of 280 char'),
   category: postCategorySchema,
   tags: z

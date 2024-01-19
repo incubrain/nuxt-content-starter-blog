@@ -71,7 +71,7 @@ const categoryParam = ref(String(route.params.category))
 const { categories } = useCatTag()
 categories.toggle(categoryParam.value as PostCategoriesT)
 
-const { getPosts, noMorePosts } = usePosts()
+const { getPosts, noMorePosts, seoErrors } = usePosts()
 
 const catUpperCaseFirst = computed(() => {
   return categories.selected.value.slice(0, 1).toUpperCase() + categories.selected.value.slice(1)
@@ -94,6 +94,20 @@ if (error.value) {
 }
 
 // Use the fetchedPosts for rendering, which will be consistent across server and client
+
+const toast = useToast()
+onMounted(() => {
+  if (seoErrors.value.length) {
+    seoErrors.value.forEach((e) => {
+      console.log('seo toast', e)
+      toast.add(e)
+    })
+
+    seoErrors.value = []
+  }
+})
+
+
 watchEffect(() => {
   if (fetchedPosts.value) {
     posts[categories.selected.value] = fetchedPosts.value
@@ -101,10 +115,9 @@ watchEffect(() => {
 })
 
 const getPostsOnScroll = async () => {
-  console.log('Getting Posts on Scroll')
   if (!postsLoading) return
-  console.log('Getting Posts on Scroll 2')
   loadingState.value = true
+
   const { error } = await useAsyncData(
     `posts-${categories.selected.value}`,
     async (): Promise<void> => {
@@ -115,8 +128,10 @@ const getPostsOnScroll = async () => {
       posts[categories.selected.value].push(...(p as PostCardT[]))
     }
   )
+
   loadingState.value = false
   await new Promise((resolve) => setTimeout(resolve, 1000))
+
   if (error.value) {
     console.error('Client Posts Error:', error.value)
   }
