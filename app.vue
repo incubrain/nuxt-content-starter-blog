@@ -31,8 +31,4 @@ useHead({
   ]
 })
 
-defineOgImageComponent('NuxtSeo', {
-  title: `Welcome to ${info.website.name}`,
-  description: 'Affordable Nuxt Expert Contractors'
-})
 </script>

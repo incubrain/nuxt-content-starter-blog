@@ -9,7 +9,7 @@
         height: 140
       }"
       :title="{
-        main: `${info.website.name} BLOG`,
+        main: `${info.website.name.toLocaleUpperCase()} BLOG`,
         subtitle: `If you're not learning, you're not growing.`
       }"
       invert
@@ -36,13 +36,20 @@
           <BlogCardSkeleton v-show="postsLoading" />
           <div
             v-show="noMorePosts[categories.selected.value]"
-            variant="outline"
-            color="primary"
             class="flex justify-center items-center w-full border border-primary-500 md:rounded-md background p-8"
           >
             <p class="foreground px-2">No More Posts...</p>
           </div>
         </ClientOnly>
+      </div>
+      <div
+        v-else
+        class="flex justify-center items-center w-full border border-primary-500 md:rounded-md background p-8"
+      >
+        <p class="foreground px-2">
+          {{ catUpperCaseFirst }}
+          Currently Has No Posts...
+        </p>
       </div>
     </div>
     <ClientOnly>
@@ -66,6 +73,9 @@ categories.toggle(categoryParam.value as PostCategoriesT)
 
 const { getPosts, noMorePosts } = usePosts()
 
+const catUpperCaseFirst = computed(() => {
+  return categories.selected.value.slice(0, 1).toUpperCase() + categories.selected.value.slice(1)
+})
 const loadingState = ref(false)
 const postsLoading = computed(() => loadingState.value)
 
@@ -143,7 +153,7 @@ definePageMeta({
   name: 'Blog'
 })
 
-if (info.website.name) {
+if (info.website && info.seo) {
   useSeoMeta({
     title: `${info.website.name} Blog`,
     ogTitle: `${info.website.name} Blog`,
@@ -155,13 +165,13 @@ if (info.website.name) {
     twitterDescription: `${info.website.name} Blog`,
     twitterImage: `${info.website.url}/images/icons/blog-icon.svg`
   })
-  
-  defineOgImageComponent('NuxtSeo', {
-    title: `${info.website.name} Blog`,
-    image: `images/icons/blog-icon.svg`
+
+  defineOgImageComponent('OgImageDefault', {
+    title: `${info.website.name} ${catUpperCaseFirst.value} Blogs`,
+    description: info.seo.blog[categories.selected.value].description,
+    image: `./${info.seo.image}`
   })
 }
-
 </script>
 
 <style></style>

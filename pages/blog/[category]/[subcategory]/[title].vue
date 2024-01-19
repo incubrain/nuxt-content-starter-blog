@@ -14,6 +14,7 @@ import { POST_FULL_PROPERTIES, postFullSchema } from '~/types/posts'
 import type { PostFullT } from '~/types/posts'
 
 const route = useRoute()
+const { website } = useInfo()
 const category = ref(String(route.params.category))
 const post = ref<PostFullT | undefined>(undefined)
 
@@ -45,9 +46,11 @@ if (post.value) {
     twitterDescription: post.value.description,
     twitterImage: `${env.baseURL}images/blog/${post.value.featured_image}`
   })
-  
-  defineOgImageComponent('NuxtSeo', {
+
+  defineOgImageComponent('OgImageDefault', {
     title: post.value.title,
+    description: post.value.description,
+    headline: website.name,
     image: `images/blog/${post.value.featured_image}`
   })
 }
