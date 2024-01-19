@@ -14,13 +14,13 @@
         class="h-full flex justify-center items-center gap-2"
       >
         <NuxtImg
-          :src="info.website.logo"
-          :alt="`${info.website.name} Logo`"
+          :src="website.logo"
+          :alt="`${website.name} Logo`"
           width="40"
           height="40"
           class="dark:invert"
         />
-        <h3 class="font-bold leading-normal"> {{ info.website.name.toLocaleUpperCase() }}</h3>
+        <h3 class="font-bold leading-normal"> {{ website.name.toLocaleUpperCase() }}</h3>
       </NuxtLink>
     </div>
     <ul class="flex h-full w-full items-center">
@@ -108,7 +108,7 @@
 </template>
 
 <script setup lang="ts">
-const info = useInfo()
+const { website } = useInfo()
 const { pages } = usePages()
 const { discord } = useSocial()
 const route = useRoute()

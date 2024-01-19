@@ -47,7 +47,7 @@
       </div>
     </main>
     <aside class="space-y-12 padded-x pb-12 pt-10 max-w-3xl mx-auto">
-      <BlogPostAuthorCard :author-id="post.authors[0]" />
+      <BlogPostAuthorCard />
     </aside>
   </div>
 </template>

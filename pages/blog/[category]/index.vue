@@ -2,14 +2,14 @@
   <div ref="infinateBlogs">
     <CommonHero
       :img="{
-        title: `${info.website.name} blog icon`,
+        title: `${website.name} blog icon`,
         src: 'images/icons/blog-icon.svg',
-        alt: `${info.website.name} blog icon`,
+        alt: `${website.name} blog icon`,
         width: 140,
         height: 140
       }"
       :title="{
-        main: `${info.website.name.toLocaleUpperCase()} BLOG`,
+        main: `${website.name.toLocaleUpperCase()} BLOG`,
         subtitle: `If you're not learning, you're not growing.`
       }"
       invert
@@ -66,7 +66,7 @@
 import type { PostCategoriesT, PostCardT, PostsInitializerT } from '~/types/posts'
 
 const route = useRoute()
-const info = useInfo()
+const { website, seo } = useInfo()
 const categoryParam = ref(String(route.params.category))
 const { categories } = useCatTag()
 categories.toggle(categoryParam.value as PostCategoriesT)
@@ -153,23 +153,23 @@ definePageMeta({
   name: 'Blog'
 })
 
-if (info.website && info.seo) {
+if (website && seo) {
   useSeoMeta({
-    title: `${info.website.name} Blog`,
-    ogTitle: `${info.website.name} Blog`,
-    description: `${info.website.name} Blog`,
-    ogDescription: `${info.website.name} Blog`,
-    ogImage: `${info.website.url}/images/icons/blog-icon.svg`,
+    title: `${website.name} Blog`,
+    ogTitle: `${website.name} Blog`,
+    description: `${website.name} Blog`,
+    ogDescription: `${website.name} Blog`,
+    ogImage: `${website.url}/images/icons/blog-icon.svg`,
     twitterCard: 'summary_large_image',
-    twitterTitle: `${info.website.name} Blog`,
-    twitterDescription: `${info.website.name} Blog`,
-    twitterImage: `${info.website.url}/images/icons/blog-icon.svg`
+    twitterTitle: `${website.name} Blog`,
+    twitterDescription: `${website.name} Blog`,
+    twitterImage: `${website.url}/images/icons/blog-icon.svg`
   })
 
   defineOgImageComponent('OgImageDefault', {
-    title: `${info.website.name} ${catUpperCaseFirst.value} Blogs`,
-    description: info.seo.blog[categories.selected.value].description,
-    image: `./${info.seo.image}`
+    title: `${website.name} ${catUpperCaseFirst.value} Blogs`,
+    description: seo.blog[categories.selected.value].description,
+    image: `./${seo.image}`
   })
 }
 </script>

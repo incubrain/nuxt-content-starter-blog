@@ -25,7 +25,6 @@
           />
         </div>
         <BlogPostAuthor
-          :author-id="post.authors[0]"
           :published-at="post.publishedAt"
         />
       </div>

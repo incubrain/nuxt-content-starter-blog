@@ -15,14 +15,14 @@
     <div class="flex justify-start items-center gap-2 flex-shrink-0">
       <div class="p-1 background rounded-full">
         <NuxtImg
-          :src="`images/authors/${info.website.author.avatar}`"
-          :alt="`${info.website.author.name} is the author of ${info.website.name}`"
+          :src="`images/author/${author.avatar}`"
+          :alt="`${author.name.full} is the author of ${website.name}`"
           width="60"
           height="60"
           class="rounded-full"
         />
       </div>
-      <h3 class="text-2xl font-semibold"> Hi 👋, I'm Drew </h3>
+      <h3 class="text-2xl font-semibold"> Hi 👋, I'm {{ author.name.given }} </h3>
     </div>
     <div class="flex flex-col justify-start items-start gap-4 w-full">
       <p class="text-base">
@@ -44,7 +44,7 @@
 
 <script setup lang="ts">
 const { personalLinkedin } = useSocial()
-const info = useInfo()
+const { website, author } = useInfo()
 
 const { width } = useWindowSize()
 const hideAd = ref(false)

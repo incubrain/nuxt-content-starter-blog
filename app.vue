@@ -10,7 +10,6 @@
 </template>
 
 <script setup lang="ts">
-const info = useInfo()
 
 useHead({
   htmlAttrs: {

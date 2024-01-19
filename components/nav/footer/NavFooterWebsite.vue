@@ -14,13 +14,13 @@
             class="flex justify-center flex-col lg:flex-row items-center gap-2 font-semibold h-[100px]"
           >
             <NuxtImg
-              :src="info.website.logo"
-              :alt="`${info.website.name} Logo`"
+              :src="website.logo"
+              :alt="`${website.name} Logo`"
               width="48"
               height="54"
               class="dark:invert"
             />
-            {{ info.website.name.toLocaleUpperCase() }}
+            {{ website.name.toLocaleUpperCase() }}
           </NuxtLink>
         </div>
         <ul
@@ -62,6 +62,6 @@
 </template>
 
 <script setup lang="ts">
-const info = useInfo()
+const { website } = useInfo()
 const { pages, socials } = usePages()
 </script>

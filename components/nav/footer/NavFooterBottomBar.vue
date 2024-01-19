@@ -1,6 +1,6 @@
 <template>
   <div class="relative border-t border-color py-4 text-center text-sm background">
-    <p> Ⓒ {{ info.website.name.toLocaleUpperCase() }} PVT LTD 2023 - {{ currentYear }}</p>
+    <p> Ⓒ {{ website.name.toLocaleUpperCase() }} PVT LTD 2023 - {{ currentYear }}</p>
     <!-- <div class="hidden space-x-4">
       <NuxtLink to="/terms-of-use"> Terms of Use </NuxtLink>
       <NuxtLink to="/privacy-policy"> Privacy Policy </NuxtLink>
@@ -10,6 +10,6 @@
 </template>
 
 <script setup lang="ts">
-const info = useInfo()
+const { website } = useInfo()
 const currentYear = ref(new Date().getFullYear())
 </script>

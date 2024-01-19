@@ -23,13 +23,13 @@
             @click="isOpen = false"
           >
             <NuxtImg
-              :src="`${info.website.logo}`"
-              :alt="`${info.website.name} logo `"
+              :src="`${website.logo}`"
+              :alt="`${website.name} logo `"
               width="34"
               height="42"
               class="dark:invert"
             />
-            <h3 class="text-sm font-bold">{{ info.website.name.toLocaleUpperCase() }}</h3>
+            <h3 class="text-sm font-bold">{{ website.name.toLocaleUpperCase() }}</h3>
           </NuxtLink>
           <UButton
             variant="solid"
@@ -64,7 +64,7 @@
 <script setup lang="ts">
 const isOpen = ref(false)
 
-const info = useInfo()
+const { website } = useInfo()
 const { pages } = usePages()
 </script>
 

@@ -80,9 +80,6 @@ export const postCardSchema = z.object({
     .array(postTagSchema)
     .min(2, 'Minimum of 2 tags allowed')
     .max(3, 'Maximum of 3 tags allowed'),
-  authors: z.array(z.number().lt(2)).refine((items) => new Set(items).size === items.length, {
-    message: 'Authors must be an array of unique numbers'
-  }),
   status: postStatusSchema,
   featured_image: z.string(),
   publishedAt: dateSchema,
@@ -97,7 +94,6 @@ export const POST_CARD_PROPERTIES = [
   'description',
   'category',
   'tags',
-  'authors',
   'status',
   'featured_image',
   'publishedAt',
@@ -106,24 +102,29 @@ export const POST_CARD_PROPERTIES = [
 ]
 
 const authorSchema = z.object({
-  id: z.number(),
-  givenName: z.string(),
-  surname: z.string(),
+  name: z.object({
+    given: z.string(),
+    surname: z.string(),
+    full: z.string(),
+    title: z.string().optional()
+  }),
   avatar: z.string(),
-  bio: z.string()
+  bio: z.object({
+    short: z.string(),
+    full: z.string()
+  }),
+  socials: z.object({
+    twitter: z.string().optional(),
+    github: z.string().optional(),
+    linkedin: z.string().optional(),
+    facebook: z.string().optional(),
+    instagram: z.string().optional(),
+    youtube: z.string().optional()
+  }),
+  sponsorLink: z.string().optional()
 })
 
 export type AuthorT = z.infer<typeof authorSchema>
-
-export const AUTHORS = <AuthorT[]>[
-  {
-    id: 1,
-    givenName: 'Drew',
-    surname: 'MacGibbon',
-    avatar: 'drew-macgibbon.jpg',
-    bio: 'Drew MacGibbon is the CEO and Founder of Incubrain, with over a decade of online business expertise and a wealth of Nuxt experience, he loves crafting exceptional products.'
-  }
-]
 
 // POST FULL POST
 export const postFullSchema = postCardSchema.extend({

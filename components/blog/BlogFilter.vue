@@ -1,9 +1,11 @@
 <template>
-  <div class="space-y-4 h-auto md:border md:border-color md:rounded-md md:p-4 lg:p-8 foreground md:background">
+  <div
+    class="space-y-4 h-auto md:border md:border-color md:rounded-md md:p-4 lg:p-8 foreground md:background"
+  >
     <div class="flex gap-4 flex-wrap">
       <UButton
         v-for="cat in categories.array"
-        :key="`${info.website.nameSlug}-blog-${cat}`"
+        :key="`${website.nameSlug}-blog-${cat}`"
         color="primary"
         :variant="categories.selected.value === cat ? 'solid' : 'outline'"
         :to="`/blog/${cat}`"
@@ -39,5 +41,5 @@
 
 <script setup lang="ts">
 const { categories } = useCatTag()
-const info = useInfo()
+const { website } = useInfo()
 </script>

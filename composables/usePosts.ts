@@ -1,13 +1,12 @@
 import type { QueryBuilderParams } from '@nuxt/content/dist/runtime/types'
-import type { PostCategoriesT, PostCardT } from '~/types/posts'
+import type { PostCategoriesT, PostCardT, AuthorT } from '~/types/posts'
 import { postCardSchema, POST_CARD_PROPERTIES } from '~/types/posts'
 
 const { validate } = useValidation()
-const postsToLoad = 10
+const { categories } = useCatTag()
+const postsToFetch = 10
 
 export default () => {
-  const { categories } = useCatTag()
-
   const noMorePosts: Ref<Record<PostCategoriesT, boolean>> = useState('posts-left', () =>
     reactive(categories.initialize(() => false))
   )
@@ -46,14 +45,8 @@ export default () => {
     }
   }
 
-  /**
-   * Fetches and validates posts based on current filters.
-   * @param limit - Max number of posts to fetch.
-   * @param skip - Number of posts to skip.
-   */
-
   const getPosts = async ({
-    limit = postsToLoad,
+    limit = postsToFetch,
     skip = 0,
     category = categories.selected.value,
     isShowcase = false
@@ -81,6 +74,6 @@ export default () => {
 
   return {
     getPosts,
-    noMorePosts
+    noMorePosts,
   }
 }

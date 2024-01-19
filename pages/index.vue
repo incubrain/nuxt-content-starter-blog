@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-const info = useInfo()
+const {website, seo } = useInfo()
 
 const mainCTA = {
   label: 'Incubrain Blog Starter',
@@ -35,23 +35,23 @@ const postTitle = {
   subtitle: 'What can you find on our blog?'
 }
 
-if (info.website.name) {
+if (website.name) {
   useSeoMeta({
-    title: `${info.website.name} Home Page`,
-    ogTitle: `${info.website.name} Home Page`,
-    description: `${info.website.name} Home Page`,
-    ogDescription: `${info.website.name} Home Page`,
-    ogImage: `${info.website.url}/images/icons/home-icon.svg`,
+    title: `${website.name} Home Page`,
+    ogTitle: `${website.name} Home Page`,
+    description: `${website.name} Home Page`,
+    ogDescription: `${website.name} Home Page`,
+    ogImage: `${website.url}/images/icons/home-icon.svg`,
     twitterCard: 'summary_large_image',
-    twitterTitle: `${info.website.name} Home Page`,
-    twitterDescription: `${info.website.name} Home Page`,
-    twitterImage: `${info.website.url}/images/icons/home-icon.svg`
+    twitterTitle: `${website.name} Home Page`,
+    twitterDescription: `${website.name} Home Page`,
+    twitterImage: `${website.url}/images/icons/home-icon.svg`
   })
 
   defineOgImageComponent('OgImageDefault', {
-    title: info.seo.home.title,
-    description: info.seo.home.description,
-    image: info.seo.image
+    title: seo.home.title,
+    description: seo.home.description,
+    image: seo.image
   })
 }
 </script>

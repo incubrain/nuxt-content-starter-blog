@@ -30,8 +30,8 @@
         </p>
         <span class="flex gap-2">
           by
-          {{ selectedAuthor(post.authors[0])?.givenName }}
-          {{ selectedAuthor(post.authors[0])?.surname }}
+          {{ author.name.given }}
+          {{ author.name.surname }}
         </span>
       </div>
       <p class="text-sm">
@@ -51,7 +51,8 @@
 </template>
 
 <script setup lang="ts">
-const { selectedAuthor } = useAuthors()
+
+const { author } = useInfo()
 
 const setDate = (d: string) => {
   const [year, month, day] = d.split('/')
