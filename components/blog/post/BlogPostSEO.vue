@@ -1,7 +1,7 @@
 <template>
   <div
     class="fixed bottom-4 right-4 z-50"
-    v-if="seoErrors.length > 0"
+    v-if="seoErrors.length > 0 && process.env.NODE_ENV !== 'production'"
   >
     <UChip
       :text="seoErrors.length"
