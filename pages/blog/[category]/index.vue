@@ -56,8 +56,8 @@
       <div
         v-if="!noMorePosts[categories.selected.value]"
         ref="sentinel"
-        class="w-full h-4 bg-red-100"
       />
+      <p> {{ !noMorePosts[categories.selected.value] }}</p>
     </ClientOnly>
   </div>
 </template>
@@ -83,7 +83,8 @@ const posts: PostsInitializerT = reactive(categories.initialize(() => <PostCardT
 
 const havePosts = computed(() => posts[categories.selected.value].length > 0)
 
-// Fetch posts on server and client
+// Fetch initial posts
+loadingState.value = true
 const { data: fetchedPosts, error } = await useAsyncData(
   `posts-${categories.selected.value}`,
   (): Promise<PostCardT[] | void> => getPosts()
@@ -93,30 +94,17 @@ if (error.value) {
   console.error('Fetch Posts Error:', error.value)
 }
 
-// Use the fetchedPosts for rendering, which will be consistent across server and client
-
-const toast = useToast()
-onMounted(() => {
-  if (seoErrors.value.length) {
-    seoErrors.value.forEach((e) => {
-      console.log('seo toast', e)
-      toast.add(e)
-    })
-
-    seoErrors.value = []
-  }
-})
-
-
 watchEffect(() => {
   if (fetchedPosts.value) {
     posts[categories.selected.value] = fetchedPosts.value
+    loadingState.value = false
   }
 })
 
+// Infinate Post Scroll
 const getPostsOnScroll = async () => {
   console.log('getPostsOnScroll')
-  if (!postsLoading) return
+  if (postsLoading.value) return
   loadingState.value = true
   console.log('getPostsOnScroll 2')
 
@@ -125,9 +113,13 @@ const getPostsOnScroll = async () => {
     async (): Promise<void> => {
       await new Promise((resolve) => setTimeout(resolve, 1000))
       const p = await getPosts({
-        skip: posts[categories.selected.value].length + 1
+        skip: posts[categories.selected.value].length + 1,
+        limit: 6,
+        category: categories.selected.value
       })
-      posts[categories.selected.value].push(...(p as PostCardT[]))
+      if (p.length) {
+        posts[categories.selected.value].push(...(p as PostCardT[]))
+      }
     }
   )
 
@@ -140,36 +132,48 @@ const getPostsOnScroll = async () => {
 }
 
 const sentinel = ref<HTMLElement | null>(null)
-let observer: IntersectionObserver | null = null
 
-onMounted(() => {
+watchEffect((onCleanup) => {
+  if (!sentinel.value) {
+    // The sentinel element is not yet in the DOM.
+    return
+  }
+
   const options = {
     root: null,
     rootMargin: '0px',
     threshold: 1.0
   }
 
-  observer = new IntersectionObserver((entries) => {
-    console.log('entries', entries)
+  const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
-      console.log('entry', entry)
       if (entry.isIntersecting) {
         getPostsOnScroll()
       }
     })
   }, options)
 
-  if (sentinel.value) observer.observe(sentinel.value)
+  observer.observe(sentinel.value)
+
+  // Remove Sentinel On UnMounted
+  onCleanup(() => {
+    if (observer && sentinel.value) {
+      observer.unobserve(sentinel.value)
+    }
+  })
 })
 
-onUnmounted(() => {
-  if (observer && sentinel.value) {
-    observer.unobserve(sentinel.value)
+// SEO Error Notifications (not visible in production)
+const toast = useToast()
+onMounted(() => {
+  if (seoErrors.value.length) {
+    seoErrors.value.forEach((e) => {
+      console.log('seo toast', e)
+      toast.add(e)
+    })
+
+    seoErrors.value = []
   }
-})
-
-definePageMeta({
-  name: 'Blog'
 })
 
 if (website && seo) {
