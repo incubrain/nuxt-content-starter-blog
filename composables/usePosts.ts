@@ -1,5 +1,5 @@
 import type { QueryBuilderParams } from '@nuxt/content/dist/runtime/types'
-import type { PostCategoriesT, PostCardT, PostFullT } from '~/types/posts'
+import type { PostCategoriesT, PostCardT, PostFullT, PostsInitializerT } from '~/types/posts'
 import type { ZodIssue, ZodIssueCode } from 'zod'
 
 import { postCardSchema, POST_CARD_PROPERTIES, postFullSchema } from '~/types/posts'
@@ -9,11 +9,15 @@ const { categories } = useCatTag()
 const postsToFetch = 6
 
 export default () => {
-  const toast = useToast()
   const seoErrors = useState('seo-errors', () => reactive([]))
-  const noMorePosts: Ref<Record<PostCategoriesT, boolean>> = useState('posts-left', () =>
+  const posts = useState('posts', () => reactive(categories.initialize(() => [] as PostCardT[])))
+  console.log('postsState', posts)
+
+  const postsFinished: Ref<Record<PostCategoriesT, boolean>> = useState('posts-left', () =>
     reactive(categories.initialize(() => false))
   )
+
+  const postsLoading = useState('post-loading', () => false as Boolean)
 
   function isValidPost(
     post: PostCardT | PostFullT,
@@ -55,7 +59,7 @@ export default () => {
 
           const formattedError = {
             id: `seo_validation_error_${post.id}_${i}`,
-            title: `SEO Error: ${post.title}`,
+            title: post.title,
             description: errDescription.value,
             color: 'red',
             icon: 'i-mdi-error',
@@ -98,7 +102,7 @@ export default () => {
       whereOptions.category = category
     }
     try {
-      const posts = await queryContent('/blog')
+      const postsFetched = await queryContent('/blog')
         .where(whereOptions)
         .only(POST_CARD_PROPERTIES)
         .sort({ publishedAt: -1 })
@@ -106,7 +110,7 @@ export default () => {
         .limit(limit)
         .find()
 
-      return posts as PostCardT[]
+      return postsFetched as PostCardT[]
     } catch (error) {
       console.error('Error fetching posts:', error)
       return []
@@ -116,9 +120,9 @@ export default () => {
   const getPosts = async ({
     limit = postsToFetch,
     skip = 0,
-    category = categories.selected.value,
+    category = categories.selected.lower.value,
     isShowcase = false
-  } = {}): Promise<void | PostCardT[]> => {
+  } = {}): Promise<[] | PostCardT[]> => {
     try {
       const newPosts = await fetchPosts({
         category,
@@ -127,21 +131,52 @@ export default () => {
       })
 
       if (newPosts.length < limit && !isShowcase) {
-        noMorePosts.value[category] = true
+        postsFinished.value[category] = true
       }
 
       const validPosts = newPosts.filter((post) => isValidPost(post as PostCardT, postCardSchema))
-      if (!validPosts.length) return
+      if (!validPosts.length) return []
       return validPosts as PostCardT[]
     } catch (error) {
       console.error('Failed to get posts:', error)
+      return []
+    }
+  }
+
+  const getInitialPosts = async () => {
+    const data = await getPosts()
+
+    if (data?.length) {
+      posts.value[categories.selected.lower.value] = data
+    }
+  }
+
+  const getPostsOnScroll = async () => {
+    if (postsLoading.value) return
+    postsLoading.value = true
+
+    const p = await getPosts({
+      skip: posts.value[categories.selected.lower.value].length + 1,
+      limit: 6,
+      category: categories.selected.lower.value
+    })
+    await new Promise((resolve) => setTimeout(resolve, 1200))
+
+    if (p?.length) {
+      posts.value[categories.selected.lower.value].push(...(p as PostCardT[]))
+      postsLoading.value = false
     }
   }
 
   return {
     getPosts,
-    noMorePosts,
+    posts,
+    postsFinished: computed(() => postsFinished.value[categories.selected.lower.value]),
+    postsLoaded: computed(() => posts.value[categories.selected.lower.value].length > 0),
+    postsLoading,
     seoErrors,
-    isValidPost
+    isValidPost,
+    getInitialPosts,
+    getPostsOnScroll
   }
 }

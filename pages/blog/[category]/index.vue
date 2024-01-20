@@ -21,24 +21,25 @@
       class="wrapper md:px-4 lg:px-8 lg:pb-8 grid grid-cols-1 lg:grid-cols-[0.5fr_1fr] items-start w-full md:gap-4 lg:gap-8 relative"
     >
       <BlogAdFloat />
+
       <div
-        v-if="havePosts"
+        v-if="postsLoaded"
         class="grid md:gap-4 grid-cols-1 lg:gap-8 md:grid-cols-2 h-full"
       >
         <BlogCard
-          v-for="post in posts[categories.selected.value]"
-          :key="`incubrain-${categories.selected.value}-post-${post.id}`"
+          v-for="post in posts[categories.selected.lower.value]"
+          :key="`incubrain-${categories.selected.lower.value}-post-${post.id}`"
           :post="post"
         />
         <ClientOnly>
-          <BlogCardSkeleton v-show="postsLoading" />
-          <BlogCardSkeleton v-show="postsLoading" />
-          <BlogCardSkeleton v-show="postsLoading" />
+          <BlogCardSkeleton v-show="loading" />
+          <BlogCardSkeleton v-show="loading" />
+          <BlogCardSkeleton v-show="loading" />
           <div
-            v-show="noMorePosts[categories.selected.value]"
+            v-show="postsFinished"
             class="flex justify-center items-center w-full border border-primary-500 md:rounded-md background p-8"
           >
-            <p class="foreground px-2">No More Posts...</p>
+            <p class="foreground px-2">No more posts...</p>
           </div>
         </ClientOnly>
       </div>
@@ -47,135 +48,33 @@
         class="flex justify-center items-center w-full border border-primary-500 md:rounded-md background p-8"
       >
         <p class="foreground px-2">
-          {{ catUpperCaseFirst }}
-          Currently Has No Posts...
+          {{ categories.selected.upperFirst.value }}
+          has no posts...
         </p>
       </div>
     </div>
-    <ClientOnly>
-      <div
-        v-if="!noMorePosts[categories.selected.value]"
-        ref="sentinel"
-      />
-      <p> {{ !noMorePosts[categories.selected.value] }}</p>
-    </ClientOnly>
+    <BlogPostInfinateScroll v-if="!postsFinished" />
+    <BlogPostSEO />
   </div>
 </template>
 
 <script setup lang="ts">
-import type { PostCategoriesT, PostCardT, PostsInitializerT } from '~/types/posts'
+import type { PostCategoriesT } from '~/types/posts'
+
+const { posts, getInitialPosts, postsLoading, postsFinished, postsLoaded } = usePosts()
+
+const loading = toRef(postsLoading)
 
 const route = useRoute()
-const { website, seo } = useInfo()
 const categoryParam = ref(String(route.params.category))
 const { categories } = useCatTag()
 categories.toggle(categoryParam.value as PostCategoriesT)
 
-const { getPosts, noMorePosts, seoErrors } = usePosts()
-
-const catUpperCaseFirst = computed(() => {
-  return categories.selected.value.slice(0, 1).toUpperCase() + categories.selected.value.slice(1)
-})
-const loadingState = ref(false)
-const postsLoading = computed(() => loadingState.value)
-
-const posts: PostsInitializerT = reactive(categories.initialize(() => <PostCardT[]>[]))
-
-const havePosts = computed(() => posts[categories.selected.value].length > 0)
-
-// Fetch initial posts
-loadingState.value = true
-const { data: fetchedPosts, error } = await useAsyncData(
-  `posts-${categories.selected.value}`,
-  (): Promise<PostCardT[] | void> => getPosts()
-)
-
-if (error.value) {
-  console.error('Fetch Posts Error:', error.value)
+if (process.server) {
+  await getInitialPosts()
 }
 
-watchEffect(() => {
-  if (fetchedPosts.value) {
-    posts[categories.selected.value] = fetchedPosts.value
-    loadingState.value = false
-  }
-})
-
-// Infinate Post Scroll
-const getPostsOnScroll = async () => {
-  console.log('getPostsOnScroll')
-  if (postsLoading.value) return
-  loadingState.value = true
-  console.log('getPostsOnScroll 2')
-
-  const { error } = await useAsyncData(
-    `posts-${categories.selected.value}`,
-    async (): Promise<void> => {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      const p = await getPosts({
-        skip: posts[categories.selected.value].length + 1,
-        limit: 6,
-        category: categories.selected.value
-      })
-      if (p.length) {
-        posts[categories.selected.value].push(...(p as PostCardT[]))
-      }
-    }
-  )
-
-  loadingState.value = false
-  await new Promise((resolve) => setTimeout(resolve, 1000))
-
-  if (error.value) {
-    console.error('Client Posts Error:', error.value)
-  }
-}
-
-const sentinel = ref<HTMLElement | null>(null)
-
-watchEffect((onCleanup) => {
-  if (!sentinel.value) {
-    // The sentinel element is not yet in the DOM.
-    return
-  }
-
-  const options = {
-    root: null,
-    rootMargin: '0px',
-    threshold: 1.0
-  }
-
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        getPostsOnScroll()
-      }
-    })
-  }, options)
-
-  observer.observe(sentinel.value)
-
-  // Remove Sentinel On UnMounted
-  onCleanup(() => {
-    if (observer && sentinel.value) {
-      observer.unobserve(sentinel.value)
-    }
-  })
-})
-
-// SEO Error Notifications (not visible in production)
-const toast = useToast()
-onMounted(() => {
-  if (seoErrors.value.length) {
-    seoErrors.value.forEach((e) => {
-      console.log('seo toast', e)
-      toast.add(e)
-    })
-
-    seoErrors.value = []
-  }
-})
-
+const { website, seo } = useInfo()
 if (website && seo) {
   useSeoMeta({
     title: `${website.name} Blog`,
@@ -190,8 +89,8 @@ if (website && seo) {
   })
 
   defineOgImageComponent('OgImageDefault', {
-    title: `${website.name} ${catUpperCaseFirst.value} Blogs`,
-    description: seo.blog[categories.selected.value].description,
+    title: `${website.name} ${categories.selected.upperFirst.value} Blogs`,
+    description: seo.blog[categories.selected.lower.value].description,
     image: `./${seo.image}`
   })
 }

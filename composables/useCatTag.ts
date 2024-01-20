@@ -42,7 +42,12 @@ export default () => {
   return {
     categories: {
       initialize: initializeCategories,
-      selected: selectedCategory,
+      selected: {
+        lower: selectedCategory,
+        upperFirst: computed(
+          () => selectedCategory.value.slice(0, 1).toUpperCase() + selectedCategory.value.slice(1)
+        )
+      },
       toggle: toggleCategory,
       array: CATEGORIES
     }
