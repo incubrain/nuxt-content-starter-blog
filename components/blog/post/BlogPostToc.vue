@@ -1,5 +1,5 @@
 <template>
-  <div class="font-[Oswald] relative text-lg">
+  <div class="font-[Oswald] relative text-base">
     <div class="flex gap-2">
       <UBadge
         :label="`Updated ${useDateFormat(updatedAt, 'DD MMM YYYY').value}`"
@@ -23,7 +23,6 @@
       >
         <NuxtLink
           :class="{ 'text-primary-500 dark:text-primary-600': isActiveSection(item.id) }"
-          class="font-semibold"
           :to="`#${item.id}`"
         >
           {{ item.text }}
@@ -31,7 +30,7 @@
         <ul
           v-if="item.children"
           :class="[
-            'transition-all duration-700 ease-out overflow-hidden',
+            'transition-all duration-700 ease-out overflow-hidden space-y-1 text-sm',
             isSectionOrChildActive(item) || expanded
               ? `max-h-[${Math.floor((item.children.length + 1) * 31)}px] pt-2`
               : 'max-h-[0px] py-0'
@@ -44,6 +43,7 @@
               'ml-4 max-w-[80%]': child.depth === 3,
               'text-primary-500 dark:text-primary-600': isActiveSection(child.id)
             }"
+            class="leading-tight"
           >
             <NuxtLink :to="`#${child.id}`">{{ child.text }}</NuxtLink>
           </li>

@@ -16,7 +16,7 @@
           Copy
         </span>
         <UIcon
-          name="i-material-symbols-content-copy-outline cursor-pointer"
+          name="i-mdi-content-copy"
           @click="copy(code)"
         />
       </div>

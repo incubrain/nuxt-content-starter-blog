@@ -97,7 +97,7 @@
         target="_blank"
         color="primary"
       >
-        SUBSCRIBE TO INCUBRAIN
+        YouTube Tutorial
         <UIcon
           name="i-mdi-chevron-right"
           class="h-4 w-4 hidden lg:inline-block"

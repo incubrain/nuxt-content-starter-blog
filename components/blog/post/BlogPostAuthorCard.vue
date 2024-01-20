@@ -14,7 +14,7 @@
       <div class="text-left space-y-1 w-full">
         <h4 class="font-semibold"> About {{ author.name.full }} </h4>
         <p class="text-sm">
-          {{ author.bio }}
+          {{ author.bio.full }}
         </p>
       </div>
     </div>

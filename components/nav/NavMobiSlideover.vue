@@ -6,7 +6,7 @@
       @click="isOpen = true"
     >
       <UIcon
-        name="i-material-symbols-menu-rounded"
+        name="i-mdi-menu"
         class="w-7 h-7 text-black dark:text-white"
       />
     </UButton>
@@ -32,14 +32,10 @@
             <h3 class="text-sm font-bold">{{ website.name.toLocaleUpperCase() }}</h3>
           </NuxtLink>
           <UButton
-            variant="solid"
+            variant="link"
+            icon="i-mdi-close"
             @click="isOpen = false"
-          >
-            <UIcon
-              name="i-material-symbols-close-rounded"
-              class="w-7 h-7"
-            />
-          </UButton>
+          />
         </div>
         <div v-show="pages">
           <NuxtLink
