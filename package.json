@@ -17,6 +17,7 @@
     "@nuxtjs/seo": "^2.0.0-rc.5",
     "@vueuse/nuxt": "^10.7.2",
     "nuxt": "^3.9.3",
+    "seord": "^0.0.5-patch.2",
     "vue": "^3.4.14",
     "vue-router": "^4.2.5",
     "zod": "^3.22.4"

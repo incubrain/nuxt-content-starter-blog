@@ -9,6 +9,7 @@ export default defineAppConfig({
       ring: 'ring-1 ring-zinc-200 dark:ring-zinc-800',
       divide: 'divide-y divide-zinc-200 dark:divide-zinc-800',
       header: {
+        base: 'overflow-hidden rounded-t-md',
         background: 'bg-white dark:bg-black'
       }
     },

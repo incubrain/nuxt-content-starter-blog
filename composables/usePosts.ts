@@ -26,9 +26,7 @@ export default () => {
     const parsed = schema.safeParse(post)
 
     if (!parsed.success) {
-      console.warn('Failed to validate post:', parsed.error)
       if (process.server && process.env.NODE_ENV !== 'production') {
-        console.log('seo server error', parsed.error)
         // store errors in state object
         // only store if the error doesn't already exist
         let i = 1

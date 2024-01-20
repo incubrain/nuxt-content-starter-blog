@@ -75,6 +75,10 @@ export const postCardSchema = z.object({
     .min(160, 'Description must be at least 160 char long')
     .max(280, 'Description has a max length of 280 char'),
   category: postCategorySchema,
+  keywords: z.object({
+    primary: z.string(),
+    secondary: z.array(z.string()).optional()
+  }),
   tags: z
     .array(postTagSchema)
     .min(2, 'Minimum of 2 tags allowed')
@@ -94,6 +98,7 @@ export const POST_CARD_PROPERTIES = [
   'category',
   'tags',
   'status',
+  'keywords',
   'featured_image',
   'publishedAt',
   'updatedAt',
