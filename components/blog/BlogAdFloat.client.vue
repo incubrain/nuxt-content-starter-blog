@@ -43,6 +43,7 @@
       >
         Reach Out
       </UButton>
+      <slot />
     </div>
   </div>
 </template>

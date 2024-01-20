@@ -7,7 +7,7 @@
         v-for="cat in categories.array"
         :key="`${website.nameSlug}-blog-${cat}`"
         color="primary"
-        :variant="categories.selected.value === cat ? 'solid' : 'outline'"
+        :variant="categories.selected.lower.value === cat ? 'solid' : 'outline'"
         :to="`/blog/${cat}`"
         :label="cat"
         size="sm"
