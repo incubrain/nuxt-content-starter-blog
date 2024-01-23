@@ -1,5 +1,5 @@
 <template>
-  <div v-if="post.title">
+  <div v-if="post.body">
     <main>
       <BlogPostHero :post="post" />
       <div
@@ -29,7 +29,10 @@
             class="w-full"
           >
             <div class="container">
-              <div class="mx-auto space-y-8 max-w-[700px]">
+              <div
+                class="mx-auto space-y-8 max-w-[700px]"
+                ref="postContent"
+              >
                 <ContentRendererMarkdown
                   :value="post.body"
                   class="nuxt-content"
@@ -44,6 +47,12 @@
             </div>
           </ContentRenderer>
         </div>
+        <div class="max-w-[700px] mx-auto w-full py-4 lg:p-4">
+          <BlogPostSEO
+            :post="post"
+            :post-html="postHtml"
+          />
+        </div>
       </div>
     </main>
     <aside class="space-y-12 padded-x pb-12 pt-10 max-w-3xl mx-auto">
@@ -55,7 +64,22 @@
 <script setup lang="ts">
 import type { PostFullT } from '~/types/posts'
 
-defineProps({
+const postContent = ref<HTMLElement | null>(null)
+const postHtml = ref<string | null>(null)
+
+watch(
+  () => postContent.value,
+  async (newVal) => {
+    if (newVal && p.post.body) {
+      // awiat timeout of 5 seconds
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+      console.log('newVal', newVal.innerHTML)
+      postHtml.value = newVal.innerHTML
+    }
+  }
+)
+
+const p = defineProps({
   post: {
     type: Object as PropType<PostFullT>,
     required: true

@@ -11,7 +11,6 @@ const postsToFetch = 6
 export default () => {
   const seoErrors = useState('seo-errors', () => reactive([]))
   const posts = useState('posts', () => reactive(categories.initialize(() => [] as PostCardT[])))
-  console.log('postsState', posts)
 
   const postsFinished: Ref<Record<PostCategoriesT, boolean>> = useState('posts-left', () =>
     reactive(categories.initialize(() => false))

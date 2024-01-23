@@ -54,7 +54,6 @@
       </div>
     </div>
     <BlogPostInfinateScroll v-if="!postsFinished" />
-    <BlogPostSEO />
   </div>
 </template>
 

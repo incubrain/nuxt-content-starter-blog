@@ -17,7 +17,6 @@ const route = useRoute()
 const { isValidPost } = usePosts()
 const { website } = useInfo()
 const category = ref(String(route.params.category))
-console.log('postCategory', route, `/blog/${category.value}/${route.params.title}`)
 const post = ref<PostFullT | undefined>(undefined)
 
 
