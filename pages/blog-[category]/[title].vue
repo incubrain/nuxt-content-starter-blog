@@ -17,13 +17,14 @@ const route = useRoute()
 const { isValidPost } = usePosts()
 const { website } = useInfo()
 const category = ref(String(route.params.category))
+console.log('postCategory', route, `/blog/${category.value}/${route.params.title}`)
 const post = ref<PostFullT | undefined>(undefined)
 
 
 const { error } = await useAsyncData('post', async (): Promise<void> => {
   const p = await queryContent('/blog', category.value)
     .only(POST_FULL_PROPERTIES)
-    .where({ _path: route.path })
+    .where({ _path: `/blog/${category.value}/${route.params.title}` })
     .findOne()
   const validPost = isValidPost(p as PostFullT, postFullSchema)
   if (!validPost) return console.error('Post failed to load')

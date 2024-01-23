@@ -8,17 +8,15 @@
       :post-link="post._path.split('/')[2]"
       class="pb-2 pl-2"
     />
-    <NuxtLink :to="post._path">
-      <NuxtImg
-        class="rounded-md w-full object-cover aspect-video border border-color"
-        :src="`images/blog/${post.category}/${post.featured_image}`"
-        width="400"
-        height="300"
-        quality="80"
-      />
-    </NuxtLink>
+    <NuxtImg
+      class="rounded-md w-full object-cover aspect-video border border-color"
+      :src="`images/blog/${post.category}/${post.featured_image}`"
+      width="400"
+      height="300"
+      quality="80"
+    />
     <div class="flex flex-col gap-2 items-start w-full px-2 pt-2 justify-center">
-      <NuxtLink :to="post._path">
+      <NuxtLink :to="`blog-${post.category}/${post._path.split('/')[3]}`">
         <h3 class="text-xl lg:text-xl font-bold">
           {{ post.title }}
         </h3>
@@ -40,7 +38,7 @@
     </div>
     <div class="w-full flex justify-end h-full items-end pt-2">
       <UButton
-        :to="post._path"
+        :to="`blog-${post.category}/${post._path.split('/')[3]}`"
         color="white"
         variant="solid"
       >
@@ -51,7 +49,6 @@
 </template>
 
 <script setup lang="ts">
-
 const { author } = useInfo()
 
 const setDate = (d: string) => {

@@ -67,12 +67,13 @@ const loading = toRef(postsLoading)
 
 const route = useRoute()
 const categoryParam = ref(String(route.params.category))
+
+console.log('categoryParam', categoryParam.value)
+
 const { categories } = useCatTag()
 categories.toggle(categoryParam.value as PostCategoriesT)
 
-if (process.server) {
-  await getInitialPosts()
-}
+await getInitialPosts()
 
 const { website, seo } = useInfo()
 if (website && seo) {
