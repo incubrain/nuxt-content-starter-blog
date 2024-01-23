@@ -36,6 +36,7 @@
       <p class="text-base font-semibold pb-2">Rates: $30 USD PH + GST </p>
       <UButton
         :to="personalLinkedin.url"
+        :aria-label="`Reach out to ${author.name.full} on LinkedIn`"
         color="white"
         variant="solid"
         class="font-semibold px-8"
@@ -49,7 +50,7 @@
 </template>
 
 <script setup lang="ts">
-const { personalLinkedin } = useSocial()
+const { personalLinkedin } = useSocials()
 const { website, author } = useInfo()
 
 const { width } = useWindowSize()

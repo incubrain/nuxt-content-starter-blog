@@ -78,22 +78,24 @@
       <DarkToggle v-slot="{ toggle, isDark }">
         <UIcon
           :name="isDark ? 'i-heroicons-moon' : 'i-heroicons-sun'"
+          aria-label="Toggle dark mode"
           class="w-7 h-7 cursor-pointer"
           @click="toggle"
         />
       </DarkToggle>
       <NuxtLink
-        href="https://github.com/incubrain"
+        :to="companyGitHub.url"
+        :aria-label="companyGitHub.title"
         target="_blank"
         class="flex justify-center items-center"
       >
         <UIcon
-          name="i-mdi-github"
+          :name="companyGitHub.icon"
           class="w-7 h-7 text-black dark:text-white"
         />
       </NuxtLink>
       <UButton
-        :to="discord.url"
+        :to="companyYouTube.url"
         target="_blank"
         color="primary"
       >
@@ -110,7 +112,7 @@
 <script setup lang="ts">
 const { website } = useInfo()
 const { pages } = usePages()
-const { discord } = useSocial()
+const { companyYouTube, companyGitHub } = useSocials()
 const route = useRoute()
 
 const navbarHidden = ref(false)

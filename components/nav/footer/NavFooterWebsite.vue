@@ -45,7 +45,8 @@
           <NuxtLink
             v-for="social in socials"
             :key="social.title"
-            :to="social.link"
+            :to="social.url"
+            :aria-label="social.title"
             target="_blank"
             class="flex items-center"
           >
@@ -63,5 +64,6 @@
 
 <script setup lang="ts">
 const { website } = useInfo()
-const { pages, socials } = usePages()
+const { pages } = usePages()
+const { socials } = useSocials()
 </script>

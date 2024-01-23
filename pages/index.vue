@@ -10,7 +10,7 @@
         post-category="frontend"
       >
         <UButton
-          to="/blog/all"
+          to="/blog-all"
           variant="outline"
         >
           View All

@@ -5,6 +5,7 @@
       v-for="platform in socialPlatforms"
       :key="platform.name"
       :to="platform.url"
+      :aria-label="`Share article on ${platform.name}`"
       target="_blank"
       class="p-2"
     >
