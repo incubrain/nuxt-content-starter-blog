@@ -75,7 +75,6 @@
         </template>
       </UAccordion>
     </div>
-    <!-- </USlideover> -->
   </div>
 </template>
 

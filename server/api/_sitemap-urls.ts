@@ -6,6 +6,7 @@ export default defineEventHandler(async (event) => {
     .only(['_path', 'updatedAt'])
     .find()
   return articles.map((a) => {
-    return { loc: a._path, lastmod: a.updatedAt.replaceAll('/', '-') }
+    // Google requires ISO 8601 format: YYYY-MM-DD
+    return { loc: a._path, lastmod: a.updatedAt }
   })
 })

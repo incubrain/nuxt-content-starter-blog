@@ -9,7 +9,6 @@ const { categories } = useCatTag()
 const postsToFetch = 6
 
 export default () => {
-  const seoErrors = useState('seo-errors', () => reactive([]))
   const posts = useState('posts', () => reactive(categories.initialize(() => [] as PostCardT[])))
 
   const postsFinished: Ref<Record<PostCategoriesT, boolean>> = useState('posts-left', () =>
@@ -22,61 +21,13 @@ export default () => {
     post: PostCardT | PostFullT,
     schema: typeof postCardSchema | typeof postFullSchema
   ): boolean {
-    const parsed = schema.safeParse(post)
-
-    if (!parsed.success) {
-      if (process.server && process.env.NODE_ENV !== 'production') {
-        // store errors in state object
-        // only store if the error doesn't already exist
-        let i = 1
-        parsed.error.issues.forEach((err: ZodIssue) => {
-          const lengthErrors = ['too_small', 'too_big']
-          const invalidErrors = [
-            'invalid_type',
-            'invalid_union',
-            'invalid_string',
-            'invalid_union_discriminator',
-            'invalid_arguments',
-            'invalid_return_type',
-            'invalid_date'
-          ]
-          const invalidEnumErrors = ['invalid_enum_value']
-
-          const errDescription = computed(() => {
-            if (lengthErrors.includes(err.code)) {
-              return `${err.message}. Current length ${post.title.length}`
-            } else if (invalidErrors.includes(err.code)) {
-              return `${err.message}`
-            } else if (invalidEnumErrors.includes(err.code)) {
-              return `Invalid tag ${err.message.split(',')[1]}`
-            } else {
-              return err.message
-            }
-          })
-
-          const formattedError = {
-            id: `seo_validation_error_${post.id}_${i}`,
-            title: post.title,
-            description: errDescription.value,
-            color: 'red',
-            icon: 'i-mdi-error',
-            timeout: 0
-          }
-
-          i += 1
-
-          if (!seoErrors.value.includes(formattedError)) {
-            seoErrors.value.push(formattedError)
-          }
-        })
-      }
-      // parsed.error?.forEach((err: ZodError) => {
-      //   console.log('seo error 2', err)
-
-      // })
-      return false
-    } else {
+    try {
+      console.log('updatedAt', post.updatedAt)
+      schema.parse(post)
       return true
+    } catch (error) {
+      console.error('Error parsing post:', error)
+      return false
     }
   }
 
@@ -106,7 +57,7 @@ export default () => {
         .skip(skip)
         .limit(limit)
         .find()
-
+      console.log('posts fetched', postsFetched)
       return postsFetched as PostCardT[]
     } catch (error) {
       console.error('Error fetching posts:', error)
@@ -171,7 +122,6 @@ export default () => {
     postsFinished: computed(() => postsFinished.value[categories.selected.lower.value]),
     postsLoaded: computed(() => posts.value[categories.selected.lower.value].length > 0),
     postsLoading,
-    seoErrors,
     isValidPost,
     getInitialPosts,
     getPostsOnScroll

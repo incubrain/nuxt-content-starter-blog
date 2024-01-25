@@ -3,7 +3,7 @@ import { z } from 'zod'
 export const postStatusSchema = z.enum(['published', 'draft', 'unpublished', 'archived'])
 export const dateSchema = z
   .string()
-  .regex(/^\d{4}\/\d{2}\/\d{2}$/, 'Date must be in YYYY/MM/DD format.')
+  .regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be in YYYY-MM-DD format.')
 
 const isUUID = (value: string): boolean => {
   const regex = /^[0-9a-f]{8}-[0-9a-f]{4}-[4][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
@@ -68,11 +68,11 @@ export const postCardSchema = z.object({
   id: UUIDSchema,
   title: z
     .string()
-    .min(20, 'Title must be at least 20 char long')
+    .min(2, 'Title must be at least 1 char long')
     .max(70, 'Title has a max length of 70 char'),
   description: z
     .string()
-    .min(160, 'Description must be at least 160 char long')
+    .min(2, 'Description must be at least 160 char long')
     .max(280, 'Description has a max length of 280 char'),
   category: postCategorySchema,
   keywords: z.object({
@@ -81,7 +81,7 @@ export const postCardSchema = z.object({
   }),
   tags: z
     .array(postTagSchema)
-    .min(2, 'Minimum of 2 tags allowed')
+    .min(1, 'Minimum of 1 tag allowed')
     .max(3, 'Maximum of 3 tags allowed'),
   status: postStatusSchema,
   featured_image: z.string(),

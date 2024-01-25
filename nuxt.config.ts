@@ -76,12 +76,11 @@ export default defineNuxtConfig({
   ssr: true,
 
   content: {
-    // highlight: {
-    //   // Theme used in all color schemes.
-    //   theme: {
-    //     default: "github-light",
-    //     dark: "github-dark",
-    //   },
-    // },
+    highlight: {
+      theme: {
+        default: "github-light",
+        dark: "github-dark",
+      },
+    },
   }
 })

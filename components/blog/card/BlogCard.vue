@@ -24,7 +24,7 @@
 
       <div class="flex flex-row gap-2 justify-center items-center text-sm">
         <p class="text-primary">
-          {{ setDate(post.publishedAt) }}
+          {{ useDateFormat(post.publishedAt, 'DD MMM YYYY').value }}
         </p>
         <span class="flex gap-2">
           by
@@ -51,11 +51,6 @@
 <script setup lang="ts">
 const { author } = useInfo()
 
-const setDate = (d: string) => {
-  const [year, month, day] = d.split('/')
-  const timestamp = new Date(Number(year), Number(month) - 1, Number(day))
-  return useDateFormat(timestamp, 'DD MMM YYYY').value
-}
 
 defineProps({
   post: {
