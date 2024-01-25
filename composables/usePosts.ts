@@ -1,28 +1,19 @@
 import type { QueryBuilderParams } from '@nuxt/content/dist/runtime/types'
 import type { PostCategoriesT, PostCardT, PostFullT, PostsInitializerT } from '~/types/posts'
-import type { ZodIssue, ZodIssueCode } from 'zod'
 
 import { postCardSchema, POST_CARD_PROPERTIES, postFullSchema } from '~/types/posts'
 
+const postsToFetch = 6
 const { categories } = useCatTag()
 
-const postsToFetch = 6
-
 export default () => {
-  const posts = useState('posts', () => reactive(categories.initialize(() => [] as PostCardT[])))
-
-  const postsFinished: Ref<Record<PostCategoriesT, boolean>> = useState('posts-left', () =>
-    reactive(categories.initialize(() => false))
-  )
-
-  const postsLoading = useState('post-loading', () => false as Boolean)
 
   function isValidPost(
     post: PostCardT | PostFullT,
     schema: typeof postCardSchema | typeof postFullSchema
   ): boolean {
     try {
-      console.log('updatedAt', post.updatedAt)
+      console.log('postDate', post.publishedAt, post.updatedAt)
       schema.parse(post)
       return true
     } catch (error) {
@@ -57,7 +48,8 @@ export default () => {
         .skip(skip)
         .limit(limit)
         .find()
-      console.log('posts fetched', postsFetched)
+
+      console.log('postsFetched', postsFetched)
       return postsFetched as PostCardT[]
     } catch (error) {
       console.error('Error fetching posts:', error)
@@ -65,6 +57,9 @@ export default () => {
     }
   }
 
+  const postsFinished: Ref<Record<PostCategoriesT, boolean>> = useState('posts-left', () =>
+    reactive(categories.initialize(() => false))
+  )
   const getPosts = async ({
     limit = postsToFetch,
     skip = 0,
@@ -91,6 +86,9 @@ export default () => {
     }
   }
 
+  const posts = useState('posts', () => reactive(categories.initialize(() => [] as PostCardT[])))
+  const postsLoading = useState('post-loading', () => false as Boolean)
+
   const getInitialPosts = async () => {
     const data = await getPosts()
 
@@ -108,6 +106,7 @@ export default () => {
       limit: 6,
       category: categories.selected.lower.value
     })
+
     await new Promise((resolve) => setTimeout(resolve, 1200))
 
     if (p?.length) {
