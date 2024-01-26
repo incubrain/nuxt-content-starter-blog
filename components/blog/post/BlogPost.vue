@@ -73,7 +73,6 @@ watch(
     if (newVal && p.post.body) {
       // awiat timeout of 5 seconds
       await new Promise((resolve) => setTimeout(resolve, 1000))
-      console.log('newVal', newVal.innerHTML)
       postHtml.value = newVal.innerHTML
     }
   }

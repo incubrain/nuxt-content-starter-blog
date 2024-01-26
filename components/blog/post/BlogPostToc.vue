@@ -1,5 +1,5 @@
 <template>
-  <div class="font-[Oswald] relative text-base">
+  <div class="relative text-base">
     <div class="flex gap-2">
       <UBadge
         :label="`Updated ${useDateFormat(updatedAt, 'DD MMM YYYY').value}`"
@@ -14,7 +14,7 @@
         size="sm"
       />
     </div>
-    <h2 class="text-2xl font-semibold py-4">Table of Contents</h2>
+    <h2 class="text-2xl font-bold py-4 font-[Oswald]">Table of Contents</h2>
     <ul>
       <li
         v-for="item in toc"
@@ -22,22 +22,25 @@
         class="py-1"
       >
         <NuxtLink
+          class="text-lg font-[Oswald]"
           :class="{ 'text-primary-500 dark:text-primary-600': isActiveSection(item.id) }"
           :to="`#${item.id}`"
         >
-          {{ item.text }}
+          <h4>
+            {{ item.text }}
+          </h4>
         </NuxtLink>
         <ul
           v-if="item.children"
           :class="[
-            'transition-all duration-700 ease-out overflow-hidden space-y-1 text-sm',
+            'transition-all duration-700 ease-out overflow-hidden space-y-2 text-sm',
             isSectionOrChildActive(item) || expanded
               ? `max-h-[${Math.floor((item.children.length + 1) * 31)}px] pt-2`
               : 'max-h-[0px] py-0'
           ]"
         >
           <li
-            v-for="child in item.children"
+            v-for="(child, i) in item.children"
             :key="child.id"
             :class="{
               'ml-4 max-w-[80%]': child.depth === 3,
@@ -45,7 +48,11 @@
             }"
             class="leading-tight"
           >
-            <NuxtLink :to="`#${child.id}`">{{ child.text }}</NuxtLink>
+            <NuxtLink :to="`#${child.id}`">
+            <h5>
+              {{ child.text }}
+            </h5>
+            </NuxtLink>
           </li>
         </ul>
       </li>
