@@ -1,4 +1,4 @@
-import { SeoCheck } from 'seord'
+import { useSeoAnalyzer } from '../utils/useSeoAnalyzer'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
@@ -13,15 +13,16 @@ export default defineEventHandler(async (event) => {
       languageCode: 'en',
       countryCode: 'us'
     }
-    const seoCheck = new SeoCheck(contentJson, 'nuxt-content-starter-blog.vercel.app')
+    const seoCheck = useSeoAnalyzer(contentJson, 'nuxt-content-starter-blog.vercel.app')
+
+    console.log('seoCheck', seoCheck)
 
     // Perform analysis
-    const result = await seoCheck.analyzeSeo()
 
     return {
       status: 200,
       message: 'SEO checks completed',
-      result
+      result: seoCheck
     }
   } catch (error) {
     console.error('Error fetching posts:', error)
