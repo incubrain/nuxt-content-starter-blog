@@ -1,5 +1,5 @@
 import type { QueryBuilderParams } from '@nuxt/content/dist/runtime/types'
-import type { PostCategoriesT, PostCardT, PostFullT, PostsInitializerT } from '~/types/posts'
+import type { PostCategoriesT, PostCardT, PostFullT } from '~/types/posts'
 
 import { postCardSchema, POST_CARD_PROPERTIES, postFullSchema } from '~/types/posts'
 
@@ -7,13 +7,24 @@ const postsToFetch = 6
 const { categories } = useCatTag()
 
 export default () => {
+  const posts = useState('posts', () => reactive(categories.initialize(() => [] as PostCardT[])))
+  const postsLoading = useState('post-loading', () => false as Boolean)
+  const postsFinished: Ref<Record<PostCategoriesT, boolean>> = useState('posts-left', () =>
+    reactive(categories.initialize(() => false))
+  )
 
   function isValidPost(
     post: PostCardT | PostFullT,
     schema: typeof postCardSchema | typeof postFullSchema
   ): boolean {
     try {
-      console.log('postDate', post.publishedAt, post.updatedAt)
+      console.log('postTest', post.updatedAt, post.publishedAt)
+      // if (post.updatedAt.includes('/') || post.publishedAt.includes('/')) {
+      //   console.log('postTest2')
+      //   post.updatedAt = post.updatedAt.replaceAll('/', '-')
+      //   post.publishedAt = post.publishedAt.replaceAll('/', '-')
+      // }
+      console.log('postTest3', post.updatedAt, post.publishedAt)
       schema.parse(post)
       return true
     } catch (error) {
@@ -57,9 +68,6 @@ export default () => {
     }
   }
 
-  const postsFinished: Ref<Record<PostCategoriesT, boolean>> = useState('posts-left', () =>
-    reactive(categories.initialize(() => false))
-  )
   const getPosts = async ({
     limit = postsToFetch,
     skip = 0,
@@ -86,10 +94,8 @@ export default () => {
     }
   }
 
-  const posts = useState('posts', () => reactive(categories.initialize(() => [] as PostCardT[])))
-  const postsLoading = useState('post-loading', () => false as Boolean)
-
   const getInitialPosts = async () => {
+    if (posts.value[categories.selected.lower.value].length > 0) return
     const data = await getPosts()
 
     if (data?.length) {

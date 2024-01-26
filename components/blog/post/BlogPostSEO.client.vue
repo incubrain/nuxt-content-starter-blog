@@ -88,8 +88,8 @@ const p = defineProps({
     required: true
   },
   postHtml: {
-    type: String as PropType<string | null>,
-    required: true
+    type: String as PropType<string | undefined>,
+    default: ''
   }
 })
 
@@ -160,7 +160,7 @@ const getSEOChecks = async () => {
 
 watchEffect(() => {
   console.log('postHtml', p.postHtml)
-  if (p.postHtml !== null) {
+  if (p.postHtml && p.postHtml.length > 0) {
     console.log('Shouldnt run empty postHtml', p.postHtml)
     getSEOChecks()
   }

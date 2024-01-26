@@ -23,7 +23,7 @@
             expanded
           />
         </div>
-        <div class="mx-auto flex flex-col justify-center items-center w-full xl:col-start-2">
+        <div class="mx-auto flex flex-col items-center w-full xl:col-start-2">
           <ContentRenderer
             :value="post"
             class="w-full"
@@ -65,7 +65,7 @@
 import type { PostFullT } from '~/types/posts'
 
 const postContent = ref<HTMLElement | null>(null)
-const postHtml = ref<string | null>(null)
+const postHtml = ref<string>('')
 
 watch(
   () => postContent.value,

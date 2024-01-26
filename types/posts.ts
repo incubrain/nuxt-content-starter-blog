@@ -3,7 +3,7 @@ import { z } from 'zod'
 export const postStatusSchema = z.enum(['published', 'draft', 'unpublished', 'archived'])
 export const dateSchema = z
   .string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be in YYYY-MM-DD format.')
+  .datetime()
 
 const isUUID = (value: string): boolean => {
   const regex = /^[0-9a-f]{8}-[0-9a-f]{4}-[4][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i

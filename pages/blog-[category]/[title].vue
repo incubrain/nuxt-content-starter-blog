@@ -10,31 +10,31 @@
 </template>
 
 <script setup lang="ts">
-import { POST_FULL_PROPERTIES, postFullSchema } from '~/types/posts'
+import { POST_FULL_PROPERTIES } from '~/types/posts'
 import type { PostFullT } from '~/types/posts'
 
 const route = useRoute()
-const { isValidPost } = usePosts()
 const { website } = useInfo()
 const category = ref(String(route.params.category))
 const post = ref<PostFullT | undefined>(undefined)
 
-
-const { error } = await useAsyncData('post', async (): Promise<void> => {
+const { error, data: fetchedPost } = await useAsyncData('post', async (): Promise<PostFullT> => {
   const p = await queryContent('/blog', category.value)
     .only(POST_FULL_PROPERTIES)
     .where({ _path: `/blog/${category.value}/${route.params.title}` })
     .findOne()
-  const validPost = isValidPost(p as PostFullT, postFullSchema)
-  if (!validPost) return console.error('Post failed to load')
-  post.value = p as PostFullT
+  return p as PostFullT
 })
 
 if (error.value) console.error(error.value)
 
+watchEffect(() => {
+  if (fetchedPost.value) {
+    post.value = fetchedPost.value
+  }
+})
+
 const env = useRuntimeConfig().public
-// watch process.server and trigger a function
-watchEffect
 
 if (post.value) {
   useSeoMeta({
