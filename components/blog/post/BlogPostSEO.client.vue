@@ -1,9 +1,25 @@
 <template>
   <div v-if="formattedWarns?.content">
     <div class="space-y-8">
-      <div class="flex flex-col gap-4">
-        <h3 class="font-semibold text-xl">SEO Audit</h3>
-        <div>
+      <div class="flex flex-col items-start gap-4">
+        <h3 class="font-semibold text-lg px-2">SEO Audit</h3>
+        <div class="flex gap-2 items-start">
+          <UBadge
+            variant="solid"
+            color="white"
+            size="sm"
+          >
+            <p>Links: {{ formattedWarns.stuff.totalLinks }}</p>
+          </UBadge>
+          <UBadge
+            variant="solid"
+            color="white"
+            size="sm"
+          >
+            <p>Words: {{ formattedWarns.stuff.wordCount }}</p>
+          </UBadge>
+        </div>
+        <div class="w-full">
           <UMeter
             size="md"
             indicator
@@ -17,8 +33,6 @@
             :value="formattedWarns.stuff.keywordSeoScore"
           />
         </div>
-        <p>Links: {{ formattedWarns.stuff.totalLinks }}</p>
-        <p>WordCount: {{ formattedWarns.stuff.wordCount }}</p>
       </div>
       <UAccordion
         default-closed
