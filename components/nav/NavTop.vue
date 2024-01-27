@@ -118,10 +118,11 @@ const route = useRoute()
 const navbarHidden = ref(false)
 
 const isBlogPage = () => {
-  // Adjust this regex to match your blog URL structure
-  const blogRegex = /^\/blog\/[^\/]+\/[^\/]+\/[^\/]+$/
+  // Adjust this regex to match the updated blog URL structure
+  const blogRegex = /^\/blog-[^\/]+\/[^\/]+$/
   return blogRegex.test(route.path)
 }
+
 
 let lastScrollTop = 0
 onMounted(() => {
