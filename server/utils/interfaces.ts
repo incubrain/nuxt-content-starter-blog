@@ -8,6 +8,7 @@ export interface LinksGroup {
   unique: Link[]
 }
 export interface KeywordDensity {
+  area: string
   keyword: string
   density: number
   position?: number
@@ -22,9 +23,40 @@ export interface ContentJson {
   countryCode: string
 }
 
+export interface Keywords {
+  primary: {
+    body: KeywordDensity
+    inTitle: KeywordDensity
+    inMetaDescription: KeywordDensity
+  }
+  secondary: {
+    body: KeywordDensity[]
+    inTitle: KeywordDensity[]
+    inMetaDescription: KeywordDensity[]
+  },
+  primaryArray: KeywordDensity[]
+  secondaryArray: KeywordDensity[]
+  score?: number
+}
+
+export interface MessageData {
+  keywords: Keywords
+  links: {
+    internal: LinksGroup
+    outbound: LinksGroup
+  }
+  headings: Heading[]
+}
+
 export interface Heading {
   text: string
   tag: string
+}
+
+export interface Messages {
+  warnings: string[]
+  goodPoints: string[]
+  minorWarnings: string[]
 }
 
 export interface SeoData {
@@ -32,7 +64,7 @@ export interface SeoData {
   wordCount: number
   keywordSeoScore: number
   keywordFrequency: number
-  messages: { warnings: string[]; goodPoints: string[]; minorWarnings: string[] }
+  messages: Messages
   keywordDensity: number
   subKeywordDensity: KeywordDensity[]
   totalLinks: number

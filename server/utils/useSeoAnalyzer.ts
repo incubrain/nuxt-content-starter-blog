@@ -1,5 +1,5 @@
 import { useHtmlAnalyzer } from './htmlAnalyzer' // Importing the refactored HtmlAnalyzer composable
-import type { ContentJson, Heading } from './interfaces'
+import type { ContentJson, Heading, MessageData } from './interfaces'
 import { useKeywordDensity } from './seoKeywordDensity'
 import { useSeoScoring } from './seoScoring'
 import { useSeoMessages } from './seoMessages' // Assuming you have refactored assignSeoMessages to useSeoMessages
@@ -11,18 +11,18 @@ export function useSeoAnalyzer(
 ) {
   const baseContent = {
     ...content,
+    htmlText: content.htmlText.toLowerCase(),
     title: content.title.toLowerCase(),
     metaDescription: content.metaDescription.toLowerCase(),
     keyword: content.keyword.toLowerCase(),
     subKeywords: content.subKeywords.map((subKeyword) => subKeyword.toLowerCase())
   }
 
-  const htmlContent = baseContent.htmlText.toLowerCase()
   // Use the useHtmlAnalyzer composable
   // Perform SEO scoring
   const { getWordCount, getAllLinks, getInternalLinks, getOutboundLinks, getAllHeadingTags } =
-    useHtmlAnalyzer(baseContent.htmlText, siteDomainName)
-  const { getKeywordDensity, getSubKeywordsDensity } = useKeywordDensity(baseContent, htmlContent)
+    useHtmlAnalyzer(baseContent, siteDomainName)
+  const { analyzeKeywords } = useKeywordDensity(baseContent)
 
   // Initialize headings
   const headings: Heading[] = getAllHeadingTags()
@@ -31,8 +31,7 @@ export function useSeoAnalyzer(
   }
 
   // Perform keyword density analysis
-  const keywordDensity = getKeywordDensity()
-  const subKeywordsDensity = getSubKeywordsDensity()
+  const keywords = analyzeKeywords()
 
   // Additional analyses using HtmlAnalyzer and useSeoAnalyzer results
   const wordCount = getWordCount()
@@ -42,34 +41,40 @@ export function useSeoAnalyzer(
   const outboundLinks = getOutboundLinks()
 
   // Assign SEO messages
-  const links = { internal: internalLinks, outbound: outboundLinks }
-  const messages = useSeoMessages(
-    baseContent,
-    keywordDensity.density,
-    subKeywordsDensity,
-    headings,
-    links
-  )
 
-  const { getKeywordSeoScore, getSeoScore } = useSeoScoring(
-    keywordDensity,
-    subKeywordsDensity,
-    messages
-  )
+  const messageData = {
+    keywords,
+    links: {
+      internal: internalLinks,
+      outbound: outboundLinks
+    },
+    headings
+  } as MessageData
+
+  const messages = useSeoMessages({
+    content: baseContent,
+    messageData
+  })
+
+  const { getKeywordSeoScore, getSeoScore } = useSeoScoring(keywords, messages)
   const seoScore = getSeoScore()
   const keywordSeoScore = getKeywordSeoScore()
+  keywords.score = keywordSeoScore
 
   return {
-    keywordDensity,
-    subKeywordsDensity,
     seoScore,
-    keywordSeoScore,
+    keywords,
     messages,
     headings,
-    //
-    wordCount,
-    totalLinks,
-    internalLinks,
-    outboundLinks
+    count: {
+      words: wordCount,
+      links: totalLinks,
+      linksInternal: internalLinks.all.length,
+      linksOutbound: outboundLinks.all.length
+    },
+    links: {
+      internal: internalLinks,
+      outbound: outboundLinks
+    }
   }
 }

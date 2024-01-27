@@ -18,13 +18,6 @@ export default () => {
     schema: typeof postCardSchema | typeof postFullSchema
   ): boolean {
     try {
-      console.log('postTest', post.updatedAt, post.publishedAt)
-      // if (post.updatedAt.includes('/') || post.publishedAt.includes('/')) {
-      //   console.log('postTest2')
-      //   post.updatedAt = post.updatedAt.replaceAll('/', '-')
-      //   post.publishedAt = post.publishedAt.replaceAll('/', '-')
-      // }
-      console.log('postTest3', post.updatedAt, post.publishedAt)
       schema.parse(post)
       return true
     } catch (error) {
