@@ -1,5 +1,5 @@
 <template>
-  <div v-if="formattedWarns?.content">
+  <div v-if="warns?.content">
     <div class="space-y-8">
       <div class="flex flex-col items-start gap-4">
         <h3 class="font-semibold text-lg px-2">SEO Audit</h3>
@@ -9,35 +9,67 @@
             color="white"
             size="sm"
           >
-            <p>Links: {{ formattedWarns.stuff.totalLinks }}</p>
+            <p>Internal Links: {{ warns.count.linksInternal }}</p>
           </UBadge>
           <UBadge
             variant="solid"
             color="white"
             size="sm"
           >
-            <p>Words: {{ formattedWarns.stuff.wordCount }}</p>
+            <p>Outbound Links: {{ warns.count.linksOutbound }}</p>
+          </UBadge>
+          <UBadge
+            variant="solid"
+            color="white"
+            size="sm"
+          >
+            <p>Words: {{ warns.count.words }}</p>
           </UBadge>
         </div>
-        <div class="w-full">
-          <UMeter
-            size="md"
-            indicator
-            label="SEO Score"
-            :value="formattedWarns.stuff.seoScore"
-          />
+        <div class="w-full space-y-4">
           <UMeter
             size="md"
             indicator
             label="Keyword Score"
-            :value="formattedWarns.stuff.keywordSeoScore"
+            :value="keywordData.score!"
+          >
+            <template #indicator>
+              <div class="text-sm text-right"> Keyword Score </div>
+            </template>
+            <template #label="{ value }">
+              <p class="text-sm"> {{ value }}% </p>
+            </template>
+          </UMeter>
+          <div
+            v-if="keywordData"
+            class="border border-color rounded-md"
+          >
+            <UTable
+              :columns="columns"
+              :rows="tableRows"
+            >
+              <template #keyword-data="{ row, columnKey }">
+                <span
+                  :class="{ 'text-primary-500': row.isPrimary }"
+                  class="text-wrap"
+                >
+                  {{ row.keyword }}
+                </span>
+              </template>
+            </UTable>
+          </div>
+          <UMeter
+            size="md"
+            indicator
+            label="SEO Score"
+            :value="warns.seoScore"
           />
         </div>
       </div>
       <UAccordion
         default-closed
         multiple
-        :items="formattedWarns.content"
+        :items="warns.content"
         :ui="{
           wrapper: 'flex flex-col gap-4 w-full'
         }"
@@ -73,18 +105,26 @@
         </template>
         <template #item="{ item }">
           <div
-            class="border-l-4 border p-4 rounded-md"
+            class="border-l-4 border rounded-md"
             :class="item.content.color"
           >
-            <ul>
+            <ul v-if="item.content.messages.length > 0">
               <li
                 v-for="(warn, i4) in item.content.messages"
                 :key="`warning-${i4}`"
-                class="text-black dark:text-white text-sm"
+                class="text-black dark:text-white text-sm border-b border-color py-1 last:border-b-0"
               >
-                {{ warn }}
+                <span class="px-4">
+                  {{ warn }}
+                </span>
               </li>
             </ul>
+            <p
+              v-else
+              class="text-black dark:text-white text-sm px-4 py-1"
+            >
+              No {{ item.label }}</p
+            >
           </div>
         </template>
       </UAccordion>
@@ -94,7 +134,8 @@
 
 <script setup lang="ts">
 import type { PostFullT } from '~/types/posts'
-const formattedWarns = ref({})
+const warns = ref({})
+const keywordData = ref({})
 
 const p = defineProps({
   post: {
@@ -133,9 +174,13 @@ const getSEOChecks = async () => {
     console.error(error.value)
   } else if (seoChecks.value) {
     console.log('seoChecks', seoChecks.value)
-    const post = seoChecks.value.result
-    formattedWarns.value = {
-      stuff: post,
+    const { keywords, seoScore, headings, count, links, messages } = seoChecks.value.result
+    keywordData.value = keywords
+    warns.value = {
+      seoScore,
+      headings,
+      count,
+      links,
       content: [
         {
           label: 'Warnings',
@@ -144,7 +189,7 @@ const getSEOChecks = async () => {
             icon: 'i-mdi-alert-outline',
             iconColor: 'text-red-500 dark:text-red-700',
             color: 'border-red-500 dark:border-red-700',
-            messages: post.messages.warnings
+            messages: messages.warnings
           }
         },
         {
@@ -154,7 +199,7 @@ const getSEOChecks = async () => {
             icon: 'i-mdi-alert-circle-outline',
             iconColor: 'text-yellow-500 dark:text-yellow-700',
             color: 'border-yellow-500 dark:border-yellow-700 bg-yellow-50 dark:bg-yellow-950',
-            messages: post.messages.minorWarnings
+            messages: messages.minorWarnings
           }
         },
         {
@@ -164,7 +209,7 @@ const getSEOChecks = async () => {
             icon: 'i-mdi-check-circle-outline',
             iconColor: 'text-emerald-500 dark:text-emerald-700',
             color: 'border-emerald-500 dark:border-emerald-700 bg-emerald-50 dark:bg-emerald-950',
-            messages: post.messages.goodPoints
+            messages: messages.goodPoints
           }
         }
       ]
@@ -179,6 +224,61 @@ watchEffect(() => {
     getSEOChecks()
   }
 })
+
+//
+
+// Helper function to get density by area
+const getDensityByArea = (keyword, area: string) => {
+  const densityData = keyword.find((density) => density.area === area)
+  return densityData ? densityData.density.toFixed(2) : '-'
+}
+
+// Prepare table rows
+const tableRows = computed(() => {
+  const rows = []
+
+  // Add primary keyword
+  rows.push({
+    keyword: keywordData.value.primary.body.keyword,
+    title: getDensityByArea(keywordData.value.primaryArray, 'title'),
+    meta: getDensityByArea(keywordData.value.primaryArray, 'meta'),
+    body: getDensityByArea(keywordData.value.primaryArray, 'body'),
+    isPrimary: true
+  })
+
+  // Add secondary keywords
+  const secondaryKeywordsGrouped = {}
+  keywordData.value.secondaryArray.forEach((item) => {
+    if (!secondaryKeywordsGrouped[item.keyword]) {
+      secondaryKeywordsGrouped[item.keyword] = {
+        title: '-',
+        meta: '-',
+        body: '-'
+      }
+    }
+    secondaryKeywordsGrouped[item.keyword][item.area] = item.density.toFixed(2)
+  })
+
+  for (const [keyword, areas] of Object.entries(secondaryKeywordsGrouped)) {
+    rows.push({
+      keyword,
+      title: areas.title,
+      meta: areas.meta,
+      body: areas.body,
+      isPrimary: false
+    })
+  }
+
+  return rows
+})
+
+// Define columns for the table
+const columns = [
+  { key: 'keyword', label: 'Keyword' },
+  { key: 'title', label: 'Title' },
+  { key: 'meta', label: 'Meta' },
+  { key: 'body', label: 'Body' }
+]
 </script>
 
 <style scoped></style>
