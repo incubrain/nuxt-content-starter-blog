@@ -21,7 +21,7 @@
     </div>
     <div class="hidden md:flex md:justify-center items-start md:items-center flex-shrink-0 max-w-[140px]">
       <NuxtImg
-        :src="`images/${imageUrl}`"
+        :src="imageUrl"
         alt="Incubrain inline blog CTA"
         class="dark:invert"
         sizes="10vw md:140px"
@@ -52,7 +52,7 @@ defineProps({
   imageUrl: {
     type: String,
     required: false,
-    default: 'incubrain-logo.svg'
+    default: 'website-logo.png'
   }
 })
 </script>
