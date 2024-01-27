@@ -78,9 +78,10 @@ export default defineNuxtConfig({
   content: {
     highlight: {
       theme: {
-        default: "github-light",
-        dark: "github-dark",
-      },
-    },
+        default: 'github-light',
+        light: 'github-light',
+        dark: 'github-dark'
+      }
+    }
   }
 })
