@@ -1,6 +1,6 @@
 import * as cheerio from 'cheerio'
 
-const technicalTerms = new Set([
+export const technicalTerms = new Set([
   'array',
   'function',
   'variable',
@@ -9,26 +9,7 @@ const technicalTerms = new Set([
   // ... Add more technical terms relevant to your audience
 ])
 
-const readabilityFormulasConfig = {
-  daleChall: {
-    adjustmentFactor: 3.6365,
-    difficultWordWeight: 0.1579,
-    sentenceLengthWeight: 0.0496,
-    threshold: 5.0
-  },
-  fleschKincaid: {
-    sentenceLengthWeight: 0.39,
-    syllableWeight: 11.8,
-    adjustment: -15.59
-  },
-  gunningFog: {
-    sentenceLengthWeight: 0.4,
-    complexWordWeight: 1,
-    adjustment: 0
-  }
-}
-
-type ReadabilityFormulaConfig = {
+export type ReadabilityFormulaConfig = {
   adjustmentFactor?: number
   difficultWordWeight?: number
   sentenceLengthWeight: number
@@ -37,7 +18,26 @@ type ReadabilityFormulaConfig = {
   threshold?: number
 }
 
-async function countSyllables(words: string[]): Promise<number> {
+export const readabilityFormulasConfig = {
+  daleChall: {
+    adjustmentFactor: 3.6365,
+    difficultWordWeight: 0.1579,
+    sentenceLengthWeight: 0.0496,
+    threshold: 5.0
+  } as ReadabilityFormulaConfig,
+  fleschKincaid: {
+    sentenceLengthWeight: 0.39,
+    syllableWeight: 11.8,
+    adjustment: -15.59
+  } as ReadabilityFormulaConfig,
+  gunningFog: {
+    sentenceLengthWeight: 0.4,
+    complexWordWeight: 1,
+    adjustment: 0
+  } as ReadabilityFormulaConfig
+}
+
+export async function countSyllables(words: string[]): Promise<number> {
   let syllableCount = 0
   words.forEach((word) => {
     syllableCount += getSyllableCount(word)
@@ -45,11 +45,11 @@ async function countSyllables(words: string[]): Promise<number> {
   return syllableCount
 }
 
-function isTechnicalTerm(word: string): boolean {
+export function isTechnicalTerm(word: string): boolean {
   return technicalTerms.has(word.toLowerCase())
 }
 
-function isDifficultWord(word: string): boolean {
+export function isDifficultWord(word: string): boolean {
   // A simple heuristic: words longer than a certain length are considered difficult
   // This length can be adjusted based on your needs
   const difficultLengthThreshold = 7
@@ -58,7 +58,10 @@ function isDifficultWord(word: string): boolean {
   return word.length > difficultLengthThreshold && !isTechnicalTerm(word)
 }
 
-function countDifficultWords(words: string[], formulaConfig: ReadabilityFormulaConfig): number {
+export function countDifficultWords(
+  words: string[],
+  formulaConfig: ReadabilityFormulaConfig
+): number {
   let count = 0
   for (const word of words) {
     if (!technicalTerms.has(word.toLowerCase()) && isDifficultWord(word)) {
@@ -68,7 +71,7 @@ function countDifficultWords(words: string[], formulaConfig: ReadabilityFormulaC
   return count
 }
 
-function getSyllableCount(word: string): number {
+export function getSyllableCount(word: string): number {
   word = word.toLowerCase().trim()
   if (word.length <= 3) return 1 // A word with 3 or fewer letters counts as one syllable
 
@@ -83,7 +86,7 @@ function getSyllableCount(word: string): number {
   return syllableCount
 }
 
-async function countComplexWords(words: string[]): Promise<number> {
+export async function countComplexWords(words: string[]): Promise<number> {
   let complexWordCount = 0
 
   words.forEach((word) => {
@@ -102,7 +105,7 @@ async function countComplexWords(words: string[]): Promise<number> {
 const commonAbbreviations = ['Mr', 'Mrs', 'Ms', 'Dr', 'Prof', 'Sr', 'Jr', 'St']
 const abbreviationRegex = new RegExp(`\\b(?:${commonAbbreviations.join('|')})\\.$`, 'i')
 
-function splitSentences(text: string): string[] {
+export function splitSentences(text: string): string[] {
   // Split text at every period, exclamation, or question mark followed by a space
   let sentenceFragments = text.split(/([.!?])\s+/)
 
@@ -129,7 +132,7 @@ function splitSentences(text: string): string[] {
   return sentences
 }
 
-async function calculateReadability(
+export async function calculateReadability(
   text: string,
   formulaConfig: ReadabilityFormulaConfig
 ): Promise<number> {
@@ -166,7 +169,7 @@ async function calculateReadability(
   return score
 }
 
-function extractTextFromHtml(html: string): string {
+export function extractTextFromHtml(html: string): string {
   const $ = cheerio.load(html)
   $('script, style').remove() // Remove script and style elements
   return $('body').text() // Extract text from the body element
