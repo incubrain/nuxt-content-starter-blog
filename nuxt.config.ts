@@ -9,7 +9,14 @@ export default defineNuxtConfig({
     }
   },
 
-  modules: ['@nuxt/content', '@nuxt/image', '@nuxt/ui', '@nuxtjs/seo', '@vueuse/nuxt'],
+  modules: [
+    '@nuxt/content',
+    '@nuxt/image',
+    '@nuxt/ui',
+    '@nuxtjs/seo',
+    '@vueuse/nuxt',
+    '@nuxt/test-utils/module'
+  ],
 
   site: {
     url: 'your-blog-url.com',
