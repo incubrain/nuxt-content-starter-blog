@@ -1,9 +1,9 @@
 <template>
   <div v-if="warns?.content">
     <div class="space-y-8">
-      <div class="flex flex-col items-start gap-4">
-        <h3 class="font-semibold text-lg px-2">SEO Audit</h3>
-        <div class="flex gap-2 items-start">
+      <div class="flex flex-col items-start">
+        <h3 class="font-semibold text-lg py-4">SEO Audit</h3>
+        <div class="flex gap-2 items-start border-b border-color py-4">
           <UBadge
             variant="solid"
             color="white"
@@ -26,7 +26,23 @@
             <p>Words: {{ warns.count.words }}</p>
           </UBadge>
         </div>
-        <div class="w-full space-y-4">
+        <div class="space-y-2 border-b border-color py-4">
+          <UMeter
+            size="md"
+            indicator
+            label="Keyword Score"
+            :value="warns.readability.score"
+          >
+            <template #indicator>
+              <div class="text-sm text-right"> Readability: {{ warns.readability.rating }} </div>
+            </template>
+            <template #label="{ value }">
+              <p class="text-sm"> {{ value.toFixed(2) }}% </p>
+            </template>
+          </UMeter>
+          <p> {{ warns.readability.message }}</p>
+        </div>
+        <div class="w-full space-y-4 border-b border-color py-4">
           <UMeter
             size="md"
             indicator
@@ -58,76 +74,78 @@
               </template>
             </UTable>
           </div>
+        </div>
+        <div class="w-full space-y-4 border-b border-color py-4">
           <UMeter
             size="md"
             indicator
             label="SEO Score"
             :value="warns.seoScore"
           />
-        </div>
-      </div>
-      <UAccordion
-        default-closed
-        multiple
-        :items="warns.content"
-        :ui="{
-          wrapper: 'flex flex-col gap-4 w-full'
-        }"
-      >
-        <template #default="{ item, open }">
-          <UButton
-            color="white"
-            variant="link"
+          <UAccordion
+            default-closed
+            multiple
+            :items="warns.content"
             :ui="{
-              padding: 'p-0'
+              wrapper: 'flex flex-col gap-4 w-full'
             }"
           >
-            <template #leading>
-              <div class="p-1 rounded-full border flex items-center justify-center">
-                <UIcon
-                  :name="item.content.icon"
-                  class="w-5 h-5"
-                  :class="item.content.iconColor"
-                />
+            <template #default="{ item, open }">
+              <UButton
+                color="white"
+                variant="link"
+                :ui="{
+                  padding: 'p-0'
+                }"
+              >
+                <template #leading>
+                  <div class="p-1 rounded-full border flex items-center justify-center">
+                    <UIcon
+                      :name="item.content.icon"
+                      class="w-5 h-5"
+                      :class="item.content.iconColor"
+                    />
+                  </div>
+                </template>
+
+                <p> {{ item.content.messages.length }} {{ item.label }}</p>
+
+                <template #trailing>
+                  <UIcon
+                    name="i-heroicons-chevron-right-20-solid"
+                    class="w-5 h-5 ms-auto transform transition-transform duration-200"
+                    :class="[open && 'rotate-90']"
+                  />
+                </template>
+              </UButton>
+            </template>
+            <template #item="{ item }">
+              <div
+                class="border-l-4 border rounded-md"
+                :class="item.content.color"
+              >
+                <ul v-if="item.content.messages.length > 0">
+                  <li
+                    v-for="(warn, i4) in item.content.messages"
+                    :key="`warning-${i4}`"
+                    class="text-black dark:text-white text-sm border-b border-color py-1 last:border-b-0"
+                  >
+                    <p class="px-4">
+                      {{ warn }}
+                    </p>
+                  </li>
+                </ul>
+                <p
+                  v-else
+                  class="text-black dark:text-white text-sm px-4 py-1"
+                >
+                  No {{ item.label }}</p
+                >
               </div>
             </template>
-
-            <p> {{ item.content.messages.length }} {{ item.label }}</p>
-
-            <template #trailing>
-              <UIcon
-                name="i-heroicons-chevron-right-20-solid"
-                class="w-5 h-5 ms-auto transform transition-transform duration-200"
-                :class="[open && 'rotate-90']"
-              />
-            </template>
-          </UButton>
-        </template>
-        <template #item="{ item }">
-          <div
-            class="border-l-4 border rounded-md"
-            :class="item.content.color"
-          >
-            <ul v-if="item.content.messages.length > 0">
-              <li
-                v-for="(warn, i4) in item.content.messages"
-                :key="`warning-${i4}`"
-                class="text-black dark:text-white text-sm border-b border-color py-1 last:border-b-0"
-              >
-                <span class="px-4">
-                  {{ warn }}
-                </span>
-              </li>
-            </ul>
-            <p
-              v-else
-              class="text-black dark:text-white text-sm px-4 py-1"
-            >
-              No {{ item.label }}</p
-            >
-          </div>
-        </template>
-      </UAccordion>
+          </UAccordion>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -174,9 +192,11 @@ const getSEOChecks = async () => {
     console.error(error.value)
   } else if (seoChecks.value) {
     console.log('seoChecks', seoChecks.value)
-    const { keywords, seoScore, headings, count, links, messages } = seoChecks.value.result
+    const { keywords, seoScore, headings, count, links, messages, readability } =
+      seoChecks.value.result
     keywordData.value = keywords
     warns.value = {
+      readability,
       seoScore,
       headings,
       count,
