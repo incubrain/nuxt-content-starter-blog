@@ -1,4 +1,4 @@
-import type { ContentJson, KeywordDensity, Keywords } from './interfaces'
+import type { ContentJson, KeywordDensity, Keywords } from '../interfaces'
 
 /**
  * Provides keyword density analysis functions for given content.
@@ -120,7 +120,11 @@ export function useKeywordDensity(content: ContentJson) {
         inMetaDescription: subKeywordsInMetaDescription
       },
       primaryArray: [keywordDensity, keywordInTitle, keywordInMetaDescription],
-      secondaryArray: [...subKeywordsDensity, ...subKeywordsInTitle, ...subKeywordsInMetaDescription]
+      secondaryArray: [
+        ...subKeywordsDensity,
+        ...subKeywordsInTitle,
+        ...subKeywordsInMetaDescription
+      ]
     }
   }
 

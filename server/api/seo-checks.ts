@@ -13,14 +13,14 @@ export default defineEventHandler(async (event) => {
       languageCode: 'en',
       countryCode: 'us'
     }
-    const result = useSeoAnalyzer(contentJson, 'nuxt-content-starter-blog.vercel.app')
+    const result = await useSeoAnalyzer(contentJson, 'nuxt-content-starter-blog.vercel.app')
 
     // Perform analysis
 
     return {
       status: 200,
       message: 'SEO checks completed',
-      result,
+      result
     }
   } catch (error) {
     console.error('Error fetching posts:', error)

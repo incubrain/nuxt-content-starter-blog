@@ -1,10 +1,11 @@
 import { useHtmlAnalyzer } from './htmlAnalyzer' // Importing the refactored HtmlAnalyzer composable
 import type { ContentJson, Heading, MessageData } from './interfaces'
-import { useKeywordDensity } from './seoKeywordDensity'
-import { useSeoScoring } from './seoScoring'
-import { useSeoMessages } from './seoMessages' // Assuming you have refactored assignSeoMessages to useSeoMessages
+import { useKeywordDensity } from './seo/seoKeywordDensity'
+import { useSeoScoring } from './seo/seoScoring'
+import { useSeoMessages } from './seo/seoMessages' // Assuming you have refactored assignSeoMessages to useSeoMessages
+import { calculateAggregateReadabilityScore } from './seo/seoReadability'
 
-export function useSeoAnalyzer(
+export async function useSeoAnalyzer(
   content: ContentJson,
   siteDomainName: string | null = null,
   strictMode: boolean = false
@@ -61,7 +62,11 @@ export function useSeoAnalyzer(
   const keywordSeoScore = getKeywordSeoScore()
   keywords.score = keywordSeoScore
 
+  // Calculate aggregate readability score
+  const readability = await calculateAggregateReadabilityScore(baseContent.htmlText)
+
   return {
+    readability,
     seoScore,
     keywords,
     messages,

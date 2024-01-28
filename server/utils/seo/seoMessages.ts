@@ -1,4 +1,4 @@
-import type { ContentJson, MessageData, KeywordDensity } from './interfaces'
+import type { ContentJson, MessageData, KeywordDensity } from '../interfaces'
 import * as config from './seoConfig'
 
 // Assuming these constants are defined in a constants file or somewhere appropriate
@@ -25,7 +25,6 @@ export function useSeoMessages({
   const secondaryBody = secondary.body
   const secondaryTitle = secondary.inTitle
   const secondaryMeta = secondary.inMetaDescription
-
 
   function filterHeading(headingTag: string): Heading[] {
     return headings.filter((heading) => heading.tag.toLowerCase() === headingTag.toLowerCase())

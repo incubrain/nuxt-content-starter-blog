@@ -1,4 +1,4 @@
-import type { Keywords, Messages } from './interfaces'
+import type { Keywords, Messages } from '../interfaces'
 
 export function useSeoScoring(keywords: Keywords, messages: Messages) {
   const MAX_SCORE = 100
