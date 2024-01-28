@@ -1,11 +1,17 @@
 import * as cheerio from 'cheerio'
+import { getSyllableCount } from '../count/countSyllables'
 
 export const technicalTerms = new Set([
   'array',
   'function',
   'variable',
   'loop',
-  'class'
+  'class',
+  'rendering',
+  'framework',
+  'middleware',
+  'typescript'
+
   // ... Add more technical terms relevant to your audience
 ])
 
@@ -50,18 +56,18 @@ export function isTechnicalTerm(word: string): boolean {
 }
 
 export function isDifficultWord(word: string): boolean {
-  // A simple heuristic: words longer than a certain length are considered difficult
-  // This length can be adjusted based on your needs
   const difficultLengthThreshold = 7
+  const syllableThreshold = 3
 
-  // A word is difficult if it's longer than the threshold and not a technical term
-  return word.length > difficultLengthThreshold && !isTechnicalTerm(word)
+  const isDifficult =
+    (word.length > difficultLengthThreshold || getSyllableCount(word) > syllableThreshold) &&
+    !isTechnicalTerm(word)
+
+  console.log(`Word "${word}" is difficult: ${isDifficult}`)
+  return isDifficult
 }
 
-export function countDifficultWords(
-  words: string[],
-  formulaConfig: ReadabilityFormulaConfig
-): number {
+export async function countDifficultWords(words: string[]): Promise<number> {
   let count = 0
   for (const word of words) {
     if (!technicalTerms.has(word.toLowerCase()) && isDifficultWord(word)) {
@@ -71,40 +77,9 @@ export function countDifficultWords(
   return count
 }
 
-export function getSyllableCount(word: string): number {
-  word = word.toLowerCase().trim()
-  if (word.length <= 3) return 1 // A word with 3 or fewer letters counts as one syllable
-
-  // Remove silent 'e' at the end and 'es' in some cases
-  word = word.replace(/(?:e(?:s)?)$/, '')
-
-  const vowelGroups = word.match(/[aeiouy]{1,2}/g)
-  const syllableCount = vowelGroups ? vowelGroups.length : 0
-
-  // Adjust for specific vowel-consonant patterns or exceptions here if necessary
-
-  return syllableCount
-}
-
-export async function countComplexWords(words: string[]): Promise<number> {
-  let complexWordCount = 0
-
-  words.forEach((word) => {
-    // Splitting hyphenated words
-    const subWords = word.split('-')
-    subWords.forEach((subWord) => {
-      if (getSyllableCount(subWord) >= 3 && !isTechnicalTerm(subWord)) {
-        complexWordCount++
-      }
-    })
-  })
-
-  return complexWordCount
-}
-
-const commonAbbreviations = ['Mr', 'Mrs', 'Ms', 'Dr', 'Prof', 'Sr', 'Jr', 'St']
-const abbreviationRegex = new RegExp(`\\b(?:${commonAbbreviations.join('|')})\\.$`, 'i')
-
+// Define common abbreviations
+const commonAbbreviations = ['Dr', 'Mr', 'Mrs', 'Ms', 'Prof', 'Sr', 'Jr', 'St']
+const abbreviationRegex = new RegExp(`\\b(${commonAbbreviations.join('|')})\\.$`, 'i')
 export function splitSentences(text: string): string[] {
   // Split text at every period, exclamation, or question mark followed by a space
   let sentenceFragments = text.split(/([.!?])\s+/)
@@ -112,17 +87,22 @@ export function splitSentences(text: string): string[] {
   let sentences = []
   let currentSentence = ''
 
-  sentenceFragments.forEach((fragment) => {
+  for (let i = 0; i < sentenceFragments.length; i++) {
+    const fragment = sentenceFragments[i]
+    const nextFragment = sentenceFragments[i + 1]
+
     currentSentence += fragment
-    if (abbreviationRegex.test(currentSentence)) {
-      // If the current fragment ends with an abbreviation, keep adding to it
-      currentSentence += ' '
-    } else {
-      // Otherwise, consider it the end of a sentence and start a new one
+
+    // Check if the current fragment is an abbreviation or ends with punctuation
+    if (
+      !abbreviationRegex.test(fragment) &&
+      (nextFragment === '.' || nextFragment === '!' || nextFragment === '?')
+    ) {
       sentences.push(currentSentence.trim())
       currentSentence = ''
+      i++ // Skip the next fragment (punctuation)
     }
-  })
+  }
 
   // Handle any remaining text not followed by a punctuation mark
   if (currentSentence) {
@@ -144,6 +124,7 @@ export async function calculateReadability(
   const numWords = words.length
   let score: number = 0
 
+  const complexWords = await countDifficultWords(words)
   if (formulaConfig === readabilityFormulasConfig.fleschKincaid) {
     const syllables = await countSyllables(words)
     score =
@@ -151,17 +132,15 @@ export async function calculateReadability(
       formulaConfig.syllableWeight! * (syllables / numWords) +
       formulaConfig.adjustment!
   } else if (formulaConfig === readabilityFormulasConfig.gunningFog) {
-    const complexWords = await countComplexWords(words)
     score =
       formulaConfig.sentenceLengthWeight * (numWords / numSentences) +
       formulaConfig.complexWordWeight! * (complexWords / numWords) * 100
   } else if (formulaConfig === readabilityFormulasConfig.daleChall) {
     const numSentences = text.split(/[.!?]/).length
     const numWords = text.split(/\s+/).length
-    const numDifficultWords = countDifficultWords(text.split(/\s+/), formulaConfig)
 
     const score =
-      formulaConfig.difficultWordWeight! * ((numDifficultWords / numWords) * 100) +
+      formulaConfig.difficultWordWeight! * ((complexWords / numWords) * 100) +
       formulaConfig.sentenceLengthWeight * (numWords / numSentences)
     return score > formulaConfig.threshold! ? score + formulaConfig.adjustmentFactor! : score
   }
