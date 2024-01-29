@@ -1,21 +1,10 @@
-import * as cheerio from 'cheerio'
-import { getSyllableCount } from '../count/countSyllables'
-
-export const technicalTerms = new Set([
-  'array',
-  'function',
-  'variable',
-  'loop',
-  'class',
-  'rendering',
-  'framework',
-  'middleware',
-  'typescript'
-
-  // ... Add more technical terms relevant to your audience
-])
+import { processText } from '../text/textProcessing'
+import { splitSentences, splitWords } from '../text/textSplit'
+import { countDifficultWords } from '../text/textDifficultWord'
+import { countSyllables } from '../text/textSyllableCount'
 
 export type ReadabilityFormulaConfig = {
+  name: string
   adjustmentFactor?: number
   difficultWordWeight?: number
   sentenceLengthWeight: number
@@ -26,104 +15,43 @@ export type ReadabilityFormulaConfig = {
 
 export const readabilityFormulasConfig = {
   daleChall: {
+    name: 'Dale-Chall',
     adjustmentFactor: 3.6365,
     difficultWordWeight: 0.1579,
     sentenceLengthWeight: 0.0496,
     threshold: 5.0
   } as ReadabilityFormulaConfig,
   fleschKincaid: {
+    name: 'Flesch-Kincaid',
     sentenceLengthWeight: 0.39,
     syllableWeight: 11.8,
     adjustment: -15.59
   } as ReadabilityFormulaConfig,
   gunningFog: {
+    name: 'Gunning Fog',
     sentenceLengthWeight: 0.4,
     complexWordWeight: 1,
     adjustment: 0
   } as ReadabilityFormulaConfig
 }
 
-export async function countSyllables(words: string[]): Promise<number> {
-  let syllableCount = 0
-  words.forEach((word) => {
-    syllableCount += getSyllableCount(word)
-  })
-  return syllableCount
-}
-
-export function isTechnicalTerm(word: string): boolean {
-  return technicalTerms.has(word.toLowerCase())
-}
-
-export function isDifficultWord(word: string): boolean {
-  const difficultLengthThreshold = 7
-  const syllableThreshold = 3
-
-  const isDifficult =
-    (word.length > difficultLengthThreshold || getSyllableCount(word) > syllableThreshold) &&
-    !isTechnicalTerm(word)
-
-  return isDifficult
-}
-
-export async function countDifficultWords(words: string[]): Promise<number> {
-  let count = 0
-  for (const word of words) {
-    if (!technicalTerms.has(word.toLowerCase()) && isDifficultWord(word)) {
-      count++
-    }
-  }
-  return count
-}
-
-const commonAbbreviations = ['Dr', 'Mr', 'Mrs', 'Ms', 'Prof', 'Sr', 'Jr', 'St']
-const abbreviationRegex = new RegExp(`\\b(${commonAbbreviations.join('|')})\\.$`, 'i')
-export function splitSentences(text: string): string[] {
-  // Split text at every period, exclamation, or question mark followed by a space
-  let sentenceFragments = text.split(/([.!?])\s+/)
-
-  let sentences = []
-  let currentSentence = ''
-
-  for (let i = 0; i < sentenceFragments.length; i++) {
-    const fragment = sentenceFragments[i]
-    const nextFragment = sentenceFragments[i + 1]
-
-    currentSentence += fragment
-
-    // Check if the current fragment is an abbreviation or ends with punctuation
-    if (
-      !abbreviationRegex.test(fragment) &&
-      (nextFragment === '.' || nextFragment === '!' || nextFragment === '?')
-    ) {
-      sentences.push(currentSentence.trim())
-      currentSentence = ''
-      i++ // Skip the next fragment (punctuation)
-    }
-  }
-
-  // Handle any remaining text not followed by a punctuation mark
-  if (currentSentence) {
-    sentences.push(currentSentence.trim())
-  }
-
-  return sentences
-}
-
 export async function calculateReadability(
   text: string,
   formulaConfig: ReadabilityFormulaConfig
 ): Promise<number> {
+  console.log('calculateReadability')
   const sentences = splitSentences(text)
-  const words = text.split(/\s+/)
+  const words = splitWords(text)
 
   const numSentences = sentences.length
   const numWords = words.length
   let score: number = 0
 
+  const syllables = await countSyllables(words)
   const complexWords = await countDifficultWords(words)
+  console.log('numWords', numWords)
+  console.log('numSentences', numSentences)
   if (formulaConfig === readabilityFormulasConfig.fleschKincaid) {
-    const syllables = await countSyllables(words)
     score =
       formulaConfig.sentenceLengthWeight * (numWords / numSentences) +
       formulaConfig.syllableWeight! * (syllables / numWords) +
@@ -133,36 +61,35 @@ export async function calculateReadability(
       formulaConfig.sentenceLengthWeight * (numWords / numSentences) +
       formulaConfig.complexWordWeight! * (complexWords / numWords) * 100
   } else if (formulaConfig === readabilityFormulasConfig.daleChall) {
-    const numSentences = text.split(/[.!?]/).length
-    const numWords = text.split(/\s+/).length
-
-    const score =
+    console.log('daleChall running')
+    score =
       formulaConfig.difficultWordWeight! * ((complexWords / numWords) * 100) +
       formulaConfig.sentenceLengthWeight * (numWords / numSentences)
-    return score > formulaConfig.threshold! ? score + formulaConfig.adjustmentFactor! : score
+    score = score > formulaConfig.threshold! ? score + formulaConfig.adjustmentFactor! : score
   }
+  console.log('score', score)
+  console.log('complexWords', complexWords)
+  console.log('syllables', syllables)
 
   return score
 }
 
-export function extractTextFromHtml(html: string): string {
-  const $ = cheerio.load(html)
-  $('script, style').remove() // Remove script and style elements
-  return $('body').text() // Extract text from the body element
-}
-
 export async function calculateAggregateReadabilityScore(
   htmlContent: string
-): Promise<{ score: number; rating: string; message: string }> {
-  const textContent = extractTextFromHtml(htmlContent)
+): Promise<{ score: number; rating: string; message: string; words: string[] }> {
+  const processedText = processText(htmlContent)
+  const words = splitWords(processedText)
 
   let totalScore = 0
   let count = 0
 
   for (const formulaConfig of Object.values(readabilityFormulasConfig)) {
-    totalScore += await calculateReadability(textContent, formulaConfig)
+    console.log('formulaConfig', formulaConfig.name)
+    totalScore += await calculateReadability(processedText, formulaConfig)
     count++
   }
+
+  console.log('calculateReadability totalScore', totalScore, count)
 
   const averageScore = totalScore / count
   let rating: string
@@ -188,5 +115,5 @@ export async function calculateAggregateReadabilityScore(
       'Content is very challenging and likely requires specialized knowledge or higher education to comprehend.'
   }
 
-  return { score: averageScore, rating, message }
+  return { score: averageScore, rating, message, words }
 }

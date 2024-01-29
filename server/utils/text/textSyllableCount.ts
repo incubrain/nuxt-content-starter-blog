@@ -345,3 +345,11 @@ function one(value: string) {
     }
   }
 }
+
+export async function countSyllables(words: string[]): Promise<number> {
+  let syllableCount = 0
+  words.forEach((word) => {
+    syllableCount += getSyllableCount(word)
+  })
+  return syllableCount
+}
