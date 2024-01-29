@@ -1,18 +1,24 @@
-import { useHtmlAnalyzer } from './htmlAnalyzer' // Importing the refactored HtmlAnalyzer composable
 import type { ContentJson, Heading, MessageData } from './interfaces'
 import { useKeywordDensity } from './seo/seoKeywordDensity'
 import { useSeoScoring } from './seo/seoScoring'
-import { useSeoMessages } from './seo/seoMessages' // Assuming you have refactored assignSeoMessages to useSeoMessages
+import { useSeoMessages } from './seo/seoMessages'
 import { calculateAggregateReadabilityScore } from './seo/seoReadability'
+import { htmlDom } from './html/htmlDom'
+import * as head from './html/htmlHeadings'
+import * as link from './html/htmlLinks'
+import * as body from './html/htmlBody'
 
 export async function useSeoAnalyzer(
   content: ContentJson,
   siteDomainName: string | null = null,
   strictMode: boolean = false
 ) {
+  const dom = htmlDom(content.htmlText)
+
   const baseContent = {
     ...content,
     htmlText: content.htmlText.toLowerCase(),
+    htmlLower: dom.text(),
     title: content.title.toLowerCase(),
     metaDescription: content.metaDescription.toLowerCase(),
     keyword: content.keyword.toLowerCase(),
@@ -20,13 +26,11 @@ export async function useSeoAnalyzer(
   }
 
   // Use the useHtmlAnalyzer composable
-  // Perform SEO scoring
-  const { getWordCount, getAllLinks, getInternalLinks, getOutboundLinks, getAllHeadingTags } =
-    useHtmlAnalyzer(baseContent, siteDomainName)
+
   const { analyzeKeywords } = useKeywordDensity(baseContent)
 
   // Initialize headings
-  const headings: Heading[] = getAllHeadingTags()
+  const headings: Heading[] = head.getAllHeadingTags(dom)
   if (!strictMode) {
     headings.push({ tag: 'H1', text: baseContent.title })
   }
@@ -35,11 +39,11 @@ export async function useSeoAnalyzer(
   const keywords = analyzeKeywords()
 
   // Additional analyses using HtmlAnalyzer and useSeoAnalyzer results
-  const wordCount = getWordCount()
-  const allLinks = getAllLinks()
+  const wordCount = body.getWordCount(baseContent.htmlLower)
+  const allLinks = link.getAllLinks(dom)
   const totalLinks = allLinks.length
-  const internalLinks = getInternalLinks()
-  const outboundLinks = getOutboundLinks()
+  const internalLinks = link.getInternalLinks(allLinks)
+  const outboundLinks = link.getOutboundLinks(allLinks)
 
   // Assign SEO messages
 
