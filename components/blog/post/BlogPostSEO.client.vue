@@ -170,7 +170,6 @@ const p = defineProps({
 
 function stripAttributes(html: string): string {
   // Remove class, id, and style attributes
-  console.log('html', html, p.post)
   return html.replace(/\s*(class|id|style)="[^"]*"/g, '')
 }
 
@@ -191,7 +190,6 @@ const getSEOChecks = async () => {
   if (error.value) {
     console.error(error.value)
   } else if (seoChecks.value) {
-    console.log('seoChecks', seoChecks.value)
     const { keywords, seoScore, headings, count, links, messages, readability } =
       seoChecks.value.result
     keywordData.value = keywords
@@ -238,9 +236,7 @@ const getSEOChecks = async () => {
 }
 
 watchEffect(() => {
-  console.log('postHtml', p.postHtml)
   if (p.postHtml && p.postHtml.length > 0) {
-    console.log('Shouldnt run empty postHtml', p.postHtml)
     getSEOChecks()
   }
 })

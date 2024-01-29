@@ -53,7 +53,6 @@ export default () => {
         .limit(limit)
         .find()
 
-      console.log('postsFetched', postsFetched)
       return postsFetched as PostCardT[]
     } catch (error) {
       console.error('Error fetching posts:', error)

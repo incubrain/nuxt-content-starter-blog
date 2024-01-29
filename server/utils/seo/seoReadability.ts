@@ -63,7 +63,6 @@ export function isDifficultWord(word: string): boolean {
     (word.length > difficultLengthThreshold || getSyllableCount(word) > syllableThreshold) &&
     !isTechnicalTerm(word)
 
-  console.log(`Word "${word}" is difficult: ${isDifficult}`)
   return isDifficult
 }
 
@@ -77,7 +76,6 @@ export async function countDifficultWords(words: string[]): Promise<number> {
   return count
 }
 
-// Define common abbreviations
 const commonAbbreviations = ['Dr', 'Mr', 'Mrs', 'Ms', 'Prof', 'Sr', 'Jr', 'St']
 const abbreviationRegex = new RegExp(`\\b(${commonAbbreviations.join('|')})\\.$`, 'i')
 export function splitSentences(text: string): string[] {
@@ -117,7 +115,6 @@ export async function calculateReadability(
   formulaConfig: ReadabilityFormulaConfig
 ): Promise<number> {
   const sentences = splitSentences(text)
-  console.log('sentenceszz', sentences)
   const words = text.split(/\s+/)
 
   const numSentences = sentences.length
