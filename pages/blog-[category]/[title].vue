@@ -16,6 +16,8 @@ import type { PostFullT } from '~/types/posts'
 const route = useRoute()
 const { website } = useInfo()
 const category = ref(String(route.params.category))
+const post = ref<PostFullT | undefined>(undefined)
+// !todo refactor, figure out why it's not reactive on Vercel
 
 async function fetchPost(category: string, title: string) {
   const p = await queryContent('/blog', category)
@@ -26,9 +28,10 @@ async function fetchPost(category: string, title: string) {
 }
 
 // Initial fetch
-const { error, data: post } = await useAsyncData('post', () =>
-  fetchPost(category.value, String(route.params.title))
-)
+const { error } = await useAsyncData('post', async () => {
+  const p = await fetchPost(category.value, String(route.params.title))
+  post.value = p as PostFullT
+})
 
 // Watch for route changes and re-fetch post data
 watch(
@@ -37,7 +40,7 @@ watch(
     if (newParams.title !== oldParams.title) {
       category.value = String(newParams.category)
       console.log('refetching post', newParams.title)
-      post.value = await fetchPost(category.value, String(newParams.title))
+      await fetchPost(category.value, String(newParams.title))
     }
   },
   { deep: true }
