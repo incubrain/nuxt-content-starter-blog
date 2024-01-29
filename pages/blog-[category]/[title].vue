@@ -16,9 +16,9 @@ import type { PostFullT } from '~/types/posts'
 const route = useRoute()
 const { website } = useInfo()
 const category = ref(String(route.params.category))
-const post = ref<PostFullT | undefined>(undefined)
+// const post = ref<PostFullT | undefined>(undefined)
 
-const { error, data: fetchedPost } = await useAsyncData('post', async (): Promise<PostFullT> => {
+const { error, data: post } = await useAsyncData('post', async (): Promise<PostFullT> => {
   const p = await queryContent('/blog', category.value)
     .only(POST_FULL_PROPERTIES)
     .where({ _path: `/blog/${category.value}/${route.params.title}` })
@@ -28,11 +28,11 @@ const { error, data: fetchedPost } = await useAsyncData('post', async (): Promis
 
 if (error.value) console.error(error.value)
 
-watchEffect(() => {
-  if (fetchedPost.value) {
-    post.value = fetchedPost.value
-  }
-})
+// watchEffect(() => {
+//   if (post.value) {
+//     post.value = post.value
+//   }
+// })
 
 const env = useRuntimeConfig().public
 
