@@ -1,4 +1,8 @@
-import { extractTextFromHtml } from '~/server/utils/seo/seoReadability'
+import {
+  extractTextFromHtml,
+  preprocessText,
+  processText
+} from '~/server/utils/text/textProcessing'
 import { describe, test, expect } from 'vitest'
 
 describe('HTML Processing Tests', () => {

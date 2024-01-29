@@ -1,8 +1,7 @@
 import {
   calculateReadability,
   calculateAggregateReadabilityScore,
-  readabilityFormulasConfig,
-  type ReadabilityFormulaConfig
+  readabilityFormulasConfig
 } from '~/server/utils/seo/seoReadability'
 import { describe, test, expect } from 'vitest'
 

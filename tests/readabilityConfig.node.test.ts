@@ -1,4 +1,5 @@
-import { technicalTerms, readabilityFormulasConfig } from '~/server/utils/seo/seoReadability'
+import { readabilityFormulasConfig } from '~/server/utils/seo/seoReadability'
+import { technicalTerms } from '~/server/utils/text/textDifficultWord'
 import { describe, test, expect } from 'vitest'
 
 describe('Readability Configuration Tests', () => {

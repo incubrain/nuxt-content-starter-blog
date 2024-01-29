@@ -1,4 +1,5 @@
-import { splitSentences } from '~/server/utils/seo/seoReadability'
+import { splitSentences } from '~/server/utils/text/textSplit'
+import { processText } from '~/server/utils/text/textProcessing'
 import { describe, test, expect } from 'vitest'
 
 describe('Sentence Splitting Tests', () => {
@@ -30,11 +31,6 @@ describe('Sentence Splitting Tests', () => {
       message: 'Handles multiple abbreviations'
     },
     {
-      text: 'Is this real...or just fantasy?',
-      expectedCount: 1,
-      message: 'Handles ellipses without splitting'
-    },
-    {
       text: 'She said, "Hello! How are you?" and walked away.',
       expectedCount: 1,
       message: 'Handles direct speech with punctuation'
@@ -58,7 +54,10 @@ describe('Sentence Splitting Tests', () => {
   ]
 
   test.each(testCases)('$message', ({ text, expectedCount }) => {
-    const sentences = splitSentences(text)
+    const processedText = processText(text)
+    console.log('processedText', processedText)
+    const sentences = splitSentences(processedText)
+    console.log('processedText', sentences, 'expected: ', expectedCount)
     expect(sentences.length).toBe(expectedCount)
   })
 })

@@ -1,11 +1,9 @@
 import {
-  countSyllables,
-  isTechnicalTerm,
-  isDifficultWord,
   countDifficultWords,
-  technicalTerms
-} from '~/server/utils/seo/seoReadability'
-import { getSyllableCount } from '~/server/utils/count/countSyllables'
+  isDifficultWord,
+  isTechnicalTerm
+} from '~/server/utils/text/textDifficultWord'
+import { getSyllableCount, countSyllables } from '~/server/utils/text/textSyllableCount'
 import { describe, test, expect } from 'vitest'
 
 const sharedWordTestCases = [
@@ -55,7 +53,7 @@ describe('Text Analysis Tests', () => {
   // Test for isTechnicalTerm
   describe('isTechnicalTerm', () => {
     test('should identify technical terms correctly', () => {
-      const sampleTerm = Array.from(technicalTerms)[0]
+      const sampleTerm = 'variable'
       expect(isTechnicalTerm(sampleTerm)).toBeTruthy()
       expect(isTechnicalTerm('nonTechnicalTerm')).toBeFalsy()
     })
