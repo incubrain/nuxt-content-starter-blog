@@ -1,21 +1,26 @@
 export function splitSentences(text: string): string[] {
   if (!text) return []
-  const sentenceFragments = text.split(/([.!?]["']?\s+|["']?[.!?]$)/)
-  let sentences: string[] = []
+
+  let sentences = []
   let currentSentence = ''
+  let insideQuotes = false
 
-  sentenceFragments.forEach((fragment, i) => {
-    if (!fragment) return
+  for (const char of text) {
+    currentSentence += char
 
-    currentSentence += fragment
+    if (char === '"' || char === "'") insideQuotes = !insideQuotes
 
-    // Check if the fragment ends with a punctuation followed by a space, a line break, or is the last fragment
-    if (/[.!?]["']?\s+$/.test(fragment) || i === sentenceFragments.length - 1) {
-      // Add the current sentence to the sentences array and reset currentSentence
-      sentences.push(currentSentence.trim())
-      currentSentence = ''
+    if (!insideQuotes && /[.!?]/.test(char)) {
+      // Check if the next character is not a letter or the end of text
+      if (!/[A-Za-z]/.test(text.charAt(text.indexOf(char) + 1))) {
+        sentences.push(currentSentence.trim())
+        currentSentence = ''
+      }
     }
-  })
+  }
+
+  // Handling the last sentence if not empty
+  if (currentSentence) sentences.push(currentSentence.trim())
 
   return sentences
 }

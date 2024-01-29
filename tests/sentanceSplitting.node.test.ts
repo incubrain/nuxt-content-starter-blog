@@ -1,5 +1,5 @@
 import { splitSentences } from '~/server/utils/text/textSplit'
-import { processText } from '~/server/utils/text/textProcessing'
+import { preprocessText } from '~/server/utils/text/textProcessing'
 import { describe, test, expect } from 'vitest'
 
 describe('Sentence Splitting Tests', () => {
@@ -54,7 +54,7 @@ describe('Sentence Splitting Tests', () => {
   ]
 
   test.each(testCases)('$message', ({ text, expectedCount }) => {
-    const processedText = processText(text)
+    const processedText = preprocessText(text)
     console.log('processedText', processedText)
     const sentences = splitSentences(processedText)
     console.log('processedText', sentences, 'expected: ', expectedCount)

@@ -12,6 +12,7 @@ const commonAbbreviations = [
   'e\\.g',
   'i\\.e',
   'U\\.S\\.A',
+  'etc',
   'Jan',
   'Feb',
   'Mar',
@@ -27,23 +28,21 @@ const commonAbbreviations = [
 const abbreviationRegex = new RegExp(`\\b(${commonAbbreviations.join('|')})\\.`, 'gi')
 
 export function preprocessText(text: string) {
-  // Normalize whitespace
-  text = text.replace(/\s+/g, ' ')
+  // Normalize whitespace and Unicode characters
+  text = text.replace(/\s+/g, ' ').normalize('NFKD')
 
-  // Normalize the string to handle Unicode characters
-  text = text.normalize('NFKD')
-
-  // Replace ellipses with a space
+  // Replace ellipses and apostrophes
   text = text.replace(/\.{3}/g, ' ')
+  text = text.replace(/'\b|\b'/g, '')
+
+  // Remove periods from abbreviations (like 'i.e.', 'e.g.', etc.)
+  // text = text.replace(/\b([a-z]\.)+/g, (match) => match.replace(/\./g, ''))
 
   // Remove periods from abbreviations to protect them from being split
-  text = text.replace(abbreviationRegex, (match) => match.replace('.', ''))
+  text = text.replace(abbreviationRegex, (match) => match.replace(/\./g, ''))
 
   // Ensure a space after punctuation if followed by a letter
-  text = text.replace(/([.!?])([A-Za-z])/g, '$1 $2')
-
-  // Remove apostrophes (considering contractions)
-  text = text.replace(/'\b|\b'/g, '')
+  text = text.replace(/([.!?])([a-z])/g, '$1 $2')
 
   return text
 }
