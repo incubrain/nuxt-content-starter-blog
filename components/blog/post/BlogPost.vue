@@ -28,9 +28,9 @@
             :value="post"
             class="w-full"
           >
-            <div class="container">
+            <div class="container max-w-[700px]">
               <div
-                class="mx-auto space-y-8 max-w-[700px]"
+                class="mx-auto space-y-8"
                 ref="postContent"
               >
                 <ContentRendererMarkdown
@@ -39,11 +39,12 @@
                 >
                   {{ post.body }}
                 </ContentRendererMarkdown>
-                <BlogPostShare
-                  :link="post._id.replaceAll(':', '/')"
-                  :summary="post.description"
-                />
               </div>
+              <BlogPostShare
+                :link="post._id.replaceAll(':', '/')"
+                :summary="post.description"
+              />
+              <BlogPostAuthorCard />
             </div>
           </ContentRenderer>
         </div>
@@ -55,9 +56,6 @@
         </div>
       </div>
     </main>
-    <aside class="space-y-12 padded-x pb-12 pt-10 max-w-3xl mx-auto">
-      <BlogPostAuthorCard />
-    </aside>
   </div>
 </template>
 
