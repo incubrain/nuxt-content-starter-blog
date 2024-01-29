@@ -36,6 +36,7 @@ watch(
   async (newParams, oldParams) => {
     if (newParams.title !== oldParams.title) {
       category.value = String(newParams.category)
+      console.log('refetching post', newParams.title)
       post.value = await fetchPost(category.value, String(newParams.title))
     }
   },
