@@ -70,7 +70,7 @@ export default defineNuxtConfig({
   },
 
   // image: {
-  //   format: ["webp", "jpg", "png"],
+  //   format: ['avif', 'webp', 'jpg'],
   // },
 
   runtimeConfig: {},
@@ -85,6 +85,7 @@ export default defineNuxtConfig({
   content: {
     highlight: {
       theme: {
+        // !todo: light theme not working ??
         default: 'github-light',
         light: 'github-light',
         dark: 'github-dark'
