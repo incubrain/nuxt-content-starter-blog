@@ -16,23 +16,33 @@ import type { PostFullT } from '~/types/posts'
 const route = useRoute()
 const { website } = useInfo()
 const category = ref(String(route.params.category))
-// const post = ref<PostFullT | undefined>(undefined)
 
-const { error, data: post } = await useAsyncData('post', async (): Promise<PostFullT> => {
-  const p = await queryContent('/blog', category.value)
+async function fetchPost(category: string, title: string) {
+  const p = await queryContent('/blog', category)
     .only(POST_FULL_PROPERTIES)
-    .where({ _path: `/blog/${category.value}/${route.params.title}` })
+    .where({ _path: `/blog/${category}/${title}` })
     .findOne()
   return p as PostFullT
-})
+}
+
+// Initial fetch
+const { error, data: post } = await useAsyncData('post', () =>
+  fetchPost(category.value, String(route.params.title))
+)
+
+// Watch for route changes and re-fetch post data
+watch(
+  () => route.params,
+  async (newParams, oldParams) => {
+    if (newParams.title !== oldParams.title) {
+      category.value = String(newParams.category)
+      post.value = await fetchPost(category.value, String(newParams.title))
+    }
+  },
+  { deep: true }
+)
 
 if (error.value) console.error(error.value)
-
-// watchEffect(() => {
-//   if (post.value) {
-//     post.value = post.value
-//   }
-// })
 
 const env = useRuntimeConfig().public
 

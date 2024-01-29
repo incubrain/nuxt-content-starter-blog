@@ -28,7 +28,7 @@
             :value="post"
             class="w-full"
           >
-            <div class="container max-w-[700px]">
+            <div class="container max-w-[700px] pb-12">
               <div
                 class="mx-auto space-y-8"
                 ref="postContent"
