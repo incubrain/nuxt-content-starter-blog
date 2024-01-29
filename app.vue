@@ -10,7 +10,6 @@
 </template>
 
 <script setup lang="ts">
-
 useHead({
   htmlAttrs: {
     lang: 'en'
@@ -24,10 +23,9 @@ useHead({
   link: [
     {
       rel: 'icon',
-      type: 'image/png',
-      href: '/favicon.png'
+      type: 'image/ico',
+      href: '/favicon.ico'
     }
   ]
 })
-
 </script>
