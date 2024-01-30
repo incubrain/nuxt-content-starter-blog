@@ -1,12 +1,14 @@
 <template>
   <div
-    class="flex flex-col items-center py-6"
+    class="py-6 w-full flex flex-col justify-center items-center"
     v-if="image.src"
   >
     <NuxtImg
       :src="`images/blog/${params.category}/${image.src}`"
       :alt="image.alt || `${website.name} Blog Post Image`"
-      class="rounded-md max-w-full h-auto"
+      width="700px"
+      height="400px"
+      class="rounded-md border border-color w-full"
     />
     <BlogPostCaption v-if="image.caption">
       {{ image.caption }}
