@@ -1,10 +1,43 @@
 <template>
-  <div>
-
+  <div class="w-full h-auto py-12">
+    <BlogPostInstagram
+      v-if="social.platform === 'instagram'"
+      :src="src"
+    />
+    <BlogPostTwitter
+      v-else-if="social.platform === 'twitter'"
+      :src="src"
+    />
+    <BlogPostGitHub
+      v-else-if="social.platform === 'github'"
+      :src="src"
+    />
+    <BlogPostLinkedin
+      v-else-if="social.platform === 'linkedin'"
+      :src="src"
+    />
+    <div v-else class="text-center text-gray-500">
+      Unsupported platform: {{ social.platform }}
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+interface SocialPost {
+  src: string
+  platform: string
+}
+
+const p = defineProps({
+  social: {
+    type: Object as () => SocialPost,
+    required: true
+  }
+})
+
+const src = computed(() => {
+  return p.social.src
+})
 
 // Support - GitHub, Twitter, and Instagram
 
@@ -28,9 +61,6 @@
 // Research:
 // Is their existing implementations I can learn from
 // Interactive elements
-
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
