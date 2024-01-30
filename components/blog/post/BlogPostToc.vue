@@ -89,16 +89,6 @@ const p = defineProps({
 
 const activeSection = ref('')
 
-// const lineHeight = 31 // For example, 30px per item including margin and padding
-
-// const activeMaxHeight = computed(() => {
-//   return p.toc.map((item) => {
-//     return isSectionOrChildActive(item)
-//       ? `${Math.floor(item?.children?.length * lineHeight)}px`
-//       : '0'
-//   })
-// })
-
 const onScroll = () => {
   let currentSection = ''
   p.toc.forEach((section) => {
