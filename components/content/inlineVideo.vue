@@ -13,6 +13,7 @@
           the
           container
           frameborder="0"
+          loading="lazy"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowfullscreen
         >
@@ -36,9 +37,9 @@
           Your browser does not support the video tag.
         </video>
       </div>
-      <BlogPostCaption v-if="video.caption">
+      <LazyBlogPostCaption v-if="video.caption">
         {{ video.caption }}
-      </BlogPostCaption>
+      </LazyBlogPostCaption>
     </div>
     <p
       v-else
@@ -90,14 +91,12 @@ const videoSource = computed(() => {
 
 const extractYoutube = (src: string) => {
   const idMatch = src.match(/(youtu\.be\/|youtube\.com\/(watch\?v=|embed\/|v\/))(\w+)/)
-  console.log('extract YT', idMatch)
   return (idMatch && idMatch[3]) || ''
 }
 
 const extractVimeo = (src: string) => {
   // Logic to extract video ID from YouTube or Vimeo src
   const idMatch = src.match(/vimeo\.com\/(\d+)/)
-  console.log('extract Vimeo', idMatch)
   if (!idMatch) return ''
   return idMatch[1]
 }

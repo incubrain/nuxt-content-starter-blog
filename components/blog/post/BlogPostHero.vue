@@ -1,5 +1,5 @@
 <template>
-  <div class="relative w-full flex justify-center items-center foreground">
+  <div class="relative w-full flex justify-center items-center foreground pb-12">
     <div class="flex flex-col max-w-4xl">
       <Breadcrumbs class="py-12 px-4" />
       <NuxtImg

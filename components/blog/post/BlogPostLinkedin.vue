@@ -4,8 +4,8 @@
       v-if="embedUrl"
       :src="embedUrl"
       style="border: none; overflow: hidden;"
-      height="690"
-      width="504"
+      :height="embedHeight"
+      :width="embedWidth"
       frameborder="0"
       allowfullscreen
       title="Embedded LinkedIn post"
@@ -29,7 +29,7 @@ const props = defineProps({
 const embedUrl = computed(() => {
   const matches = props.src.match(/activity-(\d+)/)
   if (matches && matches[1]) {
-    if (props.compact) {
+    if (isCompact.value) {
       return `https://www.linkedin.com/embed/feed/update/urn:li:activity:${matches[1]}?compact=1`
     } else {
       return `https://www.linkedin.com/embed/feed/update/urn:li:activity:${matches[1]}`
@@ -38,7 +38,6 @@ const embedUrl = computed(() => {
   return null
 })
 
-console.log('embedUrl', embedUrl.value)
 
 const isCompact = computed(() => props.compact)
 const embedHeight = computed(() => (isCompact.value ? '399' : '690'))

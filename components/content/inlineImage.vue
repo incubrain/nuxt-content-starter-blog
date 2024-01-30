@@ -9,10 +9,11 @@
       width="700px"
       height="400px"
       class="rounded-md border border-color w-full"
+      loading="lazy"
     />
-    <BlogPostCaption v-if="image.caption">
+    <LazyBlogPostCaption v-if="image.caption">
       {{ image.caption }}
-    </BlogPostCaption>
+    </LazyBlogPostCaption>
   </div>
 </template>
 

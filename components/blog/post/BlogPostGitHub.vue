@@ -59,7 +59,6 @@ const apiPath = computed(() => {
 // this can be simplified
 const determineApiEndpoint = (url: string) => {
   let apiEndpoint = ''
-  console.log('url', url, apiPath.value)
   if (isUserProfile.value) {
     apiEndpoint = `https://api.github.com/users/${apiPath.value}`
   } else if (props.src) {
@@ -71,7 +70,6 @@ const determineApiEndpoint = (url: string) => {
 
 const { data: githubData, error } = useFetch(determineApiEndpoint(props.src))
 
-console.log('githubData', githubData, error)
 </script>
 
 <style scoped>

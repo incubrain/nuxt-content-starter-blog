@@ -1,18 +1,18 @@
 <template>
   <div class="w-full h-auto py-12">
-    <BlogPostInstagram
+    <LazyBlogPostInstagram
       v-if="social.platform === 'instagram'"
       :src="src"
     />
-    <BlogPostTwitter
+    <LazyBlogPostTwitter
       v-else-if="social.platform === 'twitter'"
       :src="src"
     />
-    <BlogPostGitHub
+    <LazyBlogPostGitHub
       v-else-if="social.platform === 'github'"
       :src="src"
     />
-    <BlogPostLinkedin
+    <LazyBlogPostLinkedin
       v-else-if="social.platform === 'linkedin'"
       :src="src"
     />
@@ -39,28 +39,23 @@ const src = computed(() => {
   return p.social.src
 })
 
-// Support - GitHub, Twitter, and Instagram
+// Support - GitHub, Twitter, and Instagram [x]
+// added LinkedIn
 
 // Basic Implementation:
-// Platform Selection: Ability to specify the social media platform
+// Platform Selection: Ability to specify the social media platform [x]
 // Display protrait or landscape mode
 // Responsive on all screens
-// Lazy Loading
+// Lazy Loading [x]
 
 // Props:
-// SocialPost object with - platform, url, caption
+// SocialPost object with - platform, url, caption [x]
 
 // Edge Cases:
-// - no platform
-// - no URL
-// - unsupported platform
+// - no platform [x]
+// - no URL [x]
+// - unsupported platform [x]
 
-// Consider:
-// Interactive Elements - Follow Buttons, Like Buttons, and Share Buttons. I might be able to do this without API access.
-
-// Research:
-// Is their existing implementations I can learn from
-// Interactive elements
 </script>
 
 <style scoped></style>

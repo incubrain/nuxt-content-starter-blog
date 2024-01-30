@@ -50,13 +50,7 @@ const props = defineProps({
   }
 })
 
-// handle these types of urls
-// https://www.instagram.com/reel/C2uQ4lWRu7r/?utm_source=ig_web_copy_link
-// https://www.instagram.com/p/C2hyDvuIA_q/?utm_source=ig_web_copy_link
 
-// Extracts the base URL (without query parameters) and ensures it ends with a slash
-
-console.log('props.src', props.src)
 const cleanUrl = computed(() => {
   if (!props.src.length || typeof props.src !== 'string') {
     console.error('Invalid URL provided:', props.src)
@@ -65,7 +59,6 @@ const cleanUrl = computed(() => {
 
   try {
     const url = new URL(props.src)
-    console.log('urlStart', url)
     return `${url.origin}${url.pathname}${
       url.pathname.endsWith('/') ? '' : '/'
     }?utm_source=ig_embed&amp;utm_campaign=loading`
@@ -74,8 +67,6 @@ const cleanUrl = computed(() => {
     return ''
   }
 })
-
-console.log('cleanUrl', cleanUrl.value)
 
 const uuid = uuidv4()
 
@@ -87,7 +78,6 @@ const embedContentKey = computed(() => {
   return `instagram-embed-${uuid}`
 })
 
-console.log('embedContainerKey', embedContainerKey.value)
 
 onMounted(() => {
   // Check if Instagram's script is loaded and instgrm object is available
@@ -105,13 +95,7 @@ useHead({
     }
   ]
 })
-// cleanUrl.value
-// https://www.instagram.com/p/C2hyDvuIA_q/?utm_source=ig_embed&amp;utm_campaign=loading
 
-// desired output structure
-// https://www.instagram.com/p/C2uQ4lWRu7r/?utm_source=ig_embed&amp;utm_campaign=loading
-
-// converted from react
 </script>
 
 <style></style>
