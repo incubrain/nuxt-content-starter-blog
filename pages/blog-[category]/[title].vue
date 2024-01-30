@@ -13,37 +13,15 @@
 import { POST_FULL_PROPERTIES } from '~/types/posts'
 import type { PostFullT } from '~/types/posts'
 
-const route = useRoute()
+const { params } = useRoute()
+const title = computed(() => String(params.title))
+const category = computed(() => String(params.category))
 const { website } = useInfo()
-const category = ref(String(route.params.category))
-const post = ref<PostFullT | undefined>(undefined)
-// !todo refactor, figure out why it's not reactive on Vercel
-
-async function fetchPost(category: string, title: string) {
-  const p = await queryContent('/blog', category)
+const { error, data: post } = await useAsyncData(`post-${title.value}`, () =>
+  queryContent('/blog', category.value)
     .only(POST_FULL_PROPERTIES)
-    .where({ _path: `/blog/${category}/${title}` })
-    .findOne()
-  return p as PostFullT
-}
-
-// Initial fetch
-const { error } = await useAsyncData('post', async () => {
-  const p = await fetchPost(category.value, String(route.params.title))
-  post.value = p as PostFullT
-})
-
-// Watch for route changes and re-fetch post data
-watch(
-  () => route.params,
-  async (newParams, oldParams) => {
-    if (newParams.title !== oldParams.title) {
-      category.value = String(newParams.category)
-      console.log('refetching post', newParams.title)
-      await fetchPost(category.value, String(newParams.title))
-    }
-  },
-  { deep: true }
+    .where({ _path: `/blog/${category.value}/${title.value}` })
+    .findOne() as Promise<PostFullT>
 )
 
 if (error.value) console.error(error.value)
