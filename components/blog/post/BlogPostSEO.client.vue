@@ -155,6 +155,9 @@ import type { PostFullT } from '~/types/posts'
 const warns = ref({})
 const keywordData = ref({})
 
+const { params } = useRoute()
+const title = computed(() => params.title)
+
 const p = defineProps({
   post: {
     type: Object as PropType<PostFullT>,
@@ -166,84 +169,77 @@ const p = defineProps({
   }
 })
 
+const haveHtml = computed(() => !!p.postHtml && p.postHtml.length > 0)
 // fetch
 
-function stripAttributes(html: string): string {
-  // Remove class, id, and style attributes
-  return html.replace(/\s*(class|id|style)="[^"]*"/g, '')
-}
+const {
+  data: seoChecks,
+  error
+} = await useAsyncData(
+  `seo-check-${title.value}`,
+  () =>
+    $fetch('/api/seo-checks', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        post: p.post,
+        postHtml: p.postHtml!
+      })
+    }),
+  {
+    watch: [haveHtml],
+    immediate: false
+  }
+)
 
-const getSEOChecks = async () => {
-  const cleanedHtml = stripAttributes(p.postHtml!)
+if (error.value) console.error('SEO Error:', error.value)
 
-  const { data: seoChecks, error } = await useFetch('/api/seo-checks', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      post: p.post,
-      postHtml: cleanedHtml
-    })
-  })
-
-  if (error.value) {
-    console.error(error.value)
-  } else if (seoChecks.value) {
-    const { keywords, seoScore, headings, count, links, messages, readability } =
-      seoChecks.value.result
-    keywordData.value = keywords
-    warns.value = {
-      readability,
-      seoScore,
-      headings,
-      count,
-      links,
-      content: [
-        {
-          label: 'Warnings',
-          expanded: true,
-          content: {
-            icon: 'i-mdi-alert-outline',
-            iconColor: 'text-red-500 dark:text-red-700',
-            color: 'border-red-500 dark:border-red-700',
-            messages: messages.warnings
-          }
-        },
-        {
-          label: 'Minor Warnings',
-          expanded: true,
-          content: {
-            icon: 'i-mdi-alert-circle-outline',
-            iconColor: 'text-yellow-500 dark:text-yellow-700',
-            color: 'border-yellow-500 dark:border-yellow-700 bg-yellow-50 dark:bg-yellow-950',
-            messages: messages.minorWarnings
-          }
-        },
-        {
-          label: 'Good Points',
-          expanded: false,
-          content: {
-            icon: 'i-mdi-check-circle-outline',
-            iconColor: 'text-emerald-500 dark:text-emerald-700',
-            color: 'border-emerald-500 dark:border-emerald-700 bg-emerald-50 dark:bg-emerald-950',
-            messages: messages.goodPoints
-          }
+function formatKeywordData(data: any) {
+  const { keywords, seoScore, headings, count, links, messages, readability } = data
+  keywordData.value = keywords
+  warns.value = {
+    readability,
+    seoScore,
+    headings,
+    count,
+    links,
+    content: [
+      {
+        label: 'Warnings',
+        expanded: true,
+        content: {
+          icon: 'i-mdi-alert-outline',
+          iconColor: 'text-red-500 dark:text-red-700',
+          color: 'border-red-500 dark:border-red-700',
+          messages: messages.warnings
         }
-      ]
-    }
+      },
+      {
+        label: 'Minor Warnings',
+        expanded: true,
+        content: {
+          icon: 'i-mdi-alert-circle-outline',
+          iconColor: 'text-yellow-500 dark:text-yellow-700',
+          color: 'border-yellow-500 dark:border-yellow-700 bg-yellow-50 dark:bg-yellow-950',
+          messages: messages.minorWarnings
+        }
+      },
+      {
+        label: 'Good Points',
+        expanded: false,
+        content: {
+          icon: 'i-mdi-check-circle-outline',
+          iconColor: 'text-emerald-500 dark:text-emerald-700',
+          color: 'border-emerald-500 dark:border-emerald-700 bg-emerald-50 dark:bg-emerald-950',
+          messages: messages.goodPoints
+        }
+      }
+    ]
   }
 }
 
-watchEffect(() => {
-  if (p.postHtml && p.postHtml.length > 0) {
-    getSEOChecks()
-  }
-})
-
-//
-
-// Helper function to get density by area
 const getDensityByArea = (keyword, area: string) => {
   const densityData = keyword.find((density) => density.area === area)
   return densityData ? densityData.density.toFixed(2) : '-'
@@ -287,6 +283,14 @@ const tableRows = computed(() => {
 
   return rows
 })
+
+watchEffect(() => {
+  if (seoChecks.value && seoChecks.value.result) {
+    formatKeywordData(seoChecks.value.result)
+  }
+})
+
+// Helper function to get density by area
 
 // Define columns for the table
 const columns = [
