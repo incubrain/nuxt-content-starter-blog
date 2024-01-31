@@ -32,7 +32,6 @@
 </template>
 
 <script setup lang="ts">
-import { v4 as uuidv4 } from 'uuid'
 
 interface IgOptions {
   caption?: boolean
@@ -68,7 +67,7 @@ const cleanUrl = computed(() => {
   }
 })
 
-const uuid = uuidv4()
+const uuid = useId()
 
 const embedContainerKey = computed(() => {
   return `embed-container-${uuid}`
