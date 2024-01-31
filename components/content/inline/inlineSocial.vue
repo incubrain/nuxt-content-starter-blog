@@ -16,9 +16,23 @@
       v-else-if="social.platform === 'linkedin'"
       :src="src"
     />
-    <div v-else class="text-center text-gray-500">
+    <LazyBlogPostYouTube
+      v-else-if="social.platform === 'youtube'"
+      :src="src"
+    />
+    <LazyBlogPostVimeo
+      v-else-if="social.platform === 'vimeo'"
+      :src="src"
+    />
+    <div
+      v-else
+      class="text-center text-gray-500"
+    >
       Unsupported platform: {{ social.platform }}
     </div>
+    <LazyBlogPostCaption v-if="social.caption">
+      {{ social.caption }}
+    </LazyBlogPostCaption>
   </div>
 </template>
 
@@ -26,6 +40,7 @@
 interface SocialPost {
   src: string
   platform: string
+  caption?: string
 }
 
 const p = defineProps({
@@ -55,7 +70,6 @@ const src = computed(() => {
 // - no platform [x]
 // - no URL [x]
 // - unsupported platform [x]
-
 </script>
 
 <style scoped></style>
