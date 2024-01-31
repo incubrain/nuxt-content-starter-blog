@@ -5,7 +5,7 @@
       <div
         class="grid grid-cols-[minmax(300px,700px)] xl:grid-cols-[minmax(250px,1fr)_740px_minmax(250px,1fr)] xl:gap-8 pt-8 padded-x justify-center"
       >
-        <div class="xl:sticky xl:top-24 xl:left-0 h-[300px] w-full xl:col-start-1 padded-x xl:px-0">
+        <div class="xl:sticky xl:top-24 xl:left-0 w-full xl:col-start-1 pb-12 ">
           <BlogPostToc
             class="background p-4 xl:p-0 rounded-md border border-color xl:border-none"
             :toc="post.body.toc.links"
@@ -14,7 +14,7 @@
             :expanded="width < 1024"
           />
         </div>
-        <div class="mx-auto flex flex-col items-center w-full xl:col-start-2 padded-x">
+        <div class="xl:col-start-2 xl:padded-x">
           <ContentRenderer :value="post">
             <div class="pb-12">
               <div
@@ -36,7 +36,7 @@
             </div>
           </ContentRenderer>
         </div>
-        <div class="max-w-[700px] mx-auto w-full py-4 lg:p-4">
+        <div class="mx-auto w-full py-4 lg:p-4">
           <BlogPostSEO
             :post="post"
             :post-html="postHtml"
