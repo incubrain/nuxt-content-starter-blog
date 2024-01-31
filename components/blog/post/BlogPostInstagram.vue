@@ -7,19 +7,17 @@
       data-instgrm-version="14"
       :data-instgrm-captioned="options.caption"
       data-width="100%"
-      style="
-        background: #fff;
-        border: 0;
-        border-radius: 3px;
-        box-shadow: 0 0 1px 0 rgba(0, 0, 0, 0.5), 0 1px 10px 0 rgba(0, 0, 0, 0.15);
-        margin: 1px;
-        max-width: 540px;
-        min-width: 326px;
-        padding: 0;
-        width: 99.375%;
-        width: -webkit-calc(100% - 2px);
-        width: calc(100% - 2px);
-      "
+      :style="{
+        background: themeColor,
+        border: 0,
+        borderRadius: '3px',
+        boxShadow: '0 0 1px 0 rgba(0, 0, 0, 0.5), 0 1px 10px 0 rgba(0, 0, 0, 0.15)',
+        margin: '1px',
+        maxWidth: '540px',
+        minWidth: '326px',
+        padding: 0,
+        width: '99.375%'
+      }"
     >
       <div
         :id="embedContentKey"
@@ -32,6 +30,10 @@
 </template>
 
 <script setup lang="ts">
+const themeColor = computed(() => {
+  const isDark = useColorMode().value === 'dark'
+  return isDark ? '#000' : '#fff'
+})
 
 interface IgOptions {
   caption?: boolean
@@ -48,7 +50,6 @@ const props = defineProps({
     default: () => ({ caption: undefined })
   }
 })
-
 
 const cleanUrl = computed(() => {
   if (!props.src.length || typeof props.src !== 'string') {
@@ -77,7 +78,6 @@ const embedContentKey = computed(() => {
   return `instagram-embed-${uuid}`
 })
 
-
 onMounted(() => {
   // Check if Instagram's script is loaded and instgrm object is available
   if (window.instgrm && window.instgrm.Embeds) {
@@ -94,7 +94,6 @@ useHead({
     }
   ]
 })
-
 </script>
 
 <style></style>
