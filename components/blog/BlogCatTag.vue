@@ -64,7 +64,6 @@ const badgeColor = (badge: PostCategoriesT | PostTagsT): string => {
     case 'typescript':
       return 'cyan' // Assuming a custom color in your Tailwind configuration
     case 'learning':
-    case 'code quality':
     case 'testing':
     case 'productivity':
       return 'yellow'
