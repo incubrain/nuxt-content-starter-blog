@@ -1,12 +1,9 @@
 <template>
-  <div class="relative background">
-    <div class="flex flex-col justify-center relative">
-      <BlogPost
-        v-if="post?.body"
-        :post="post"
-      />
-    </div>
-  </div>
+  <BlogPost
+    v-if="post?.body"
+    class="background"
+    :post="post"
+  />
 </template>
 
 <script setup lang="ts">
@@ -17,11 +14,13 @@ const { params } = useRoute()
 const title = computed(() => String(params.title))
 const category = computed(() => String(params.category))
 const { website } = useInfo()
-const { error, data: post } = await useAsyncData(`post-${title.value}`, () =>
-  queryContent('/blog', category.value)
-    .only(POST_FULL_PROPERTIES)
-    .where({ _path: `/blog/${category.value}/${title.value}` })
-    .findOne() as Promise<PostFullT>
+const { error, data: post } = await useAsyncData(
+  `post-${title.value}`,
+  () =>
+    queryContent('/blog', category.value)
+      .only(POST_FULL_PROPERTIES)
+      .where({ _path: `/blog/${category.value}/${title.value}` })
+      .findOne() as Promise<PostFullT>
 )
 
 if (error.value) console.error(error.value)

@@ -1,7 +1,7 @@
 <template>
   <div class="pt-2">
     <p
-      class="p-2 text-sm italic text-gray-500 dark:text-gray-400"
+      class="p-2 text-sm italic text-gray-500 dark:text-gray-400 text-center"
     >
     <slot />
     </p>

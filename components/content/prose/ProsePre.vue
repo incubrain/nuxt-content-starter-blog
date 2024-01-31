@@ -1,6 +1,6 @@
 <template>
   <ProseCode :code="code" :language="language" :filename="filename" :highlights="highlights" :meta="meta">
-    <pre :class="$props.class" :style="style"><slot /></pre>
+    <pre :class="$props.class" :style="style" class="prose w-full max-w-full"><slot /></pre>
   </ProseCode>
 </template>
 

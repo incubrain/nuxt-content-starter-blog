@@ -1,8 +1,6 @@
 <template>
-  <div class="rounded-md w-full flex flex-col overflow-hidden my-8">
-    <div
-      class="w-full flex justify-between items-center foreground px-4 h-10 mb-[-4px] relative"
-    >
+  <div class="rounded-md flex flex-col my-8 overflow-hidden">
+    <div class="flex justify-between items-center foreground px-4 h-10 mb-[-4px] relative">
       <span class="text-xs m-0 p-0 h-full leading-none flex items-center"> {{ language }}</span>
       <div class="flex gap-1 justify-center items-center">
         <UButton

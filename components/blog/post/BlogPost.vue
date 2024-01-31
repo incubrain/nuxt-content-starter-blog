@@ -3,25 +3,20 @@
     <main>
       <BlogPostHero :post="post" />
       <div
-        class="w-full grid grid-cols-[1fr] xl:grid-cols-[minmax(250px,1fr)_740px_minmax(250px,1fr)] xl:gap-8 pt-8 padded-x"
+        class="grid grid-cols-[minmax(300px,700px)] xl:grid-cols-[minmax(250px,1fr)_740px_minmax(250px,1fr)] xl:gap-8 pt-8 padded-x justify-center"
       >
-        <div
-          class="xl:sticky xl:top-24 xl:left-0 h-[300px] max-w-[700px] mx-auto w-full xl:col-start-1"
-        >
+        <div class="xl:sticky xl:top-24 xl:left-0 h-[300px] w-full xl:col-start-1 padded-x xl:px-0">
           <BlogPostToc
-            class="background py-6 px-4 rounded-md border border-color lg:border-none"
+            class="background p-4 xl:p-0 rounded-md border border-color xl:border-none"
             :toc="post.body.toc.links"
             :updated-at="post.updatedAt"
             :version="post.version"
             :expanded="width < 1024"
           />
         </div>
-        <div class="mx-auto flex flex-col items-center w-full xl:col-start-2 max-w-[700px]">
-          <ContentRenderer
-            :value="post"
-            class="w-full"
-          >
-            <div class="container pb-12">
+        <div class="mx-auto flex flex-col items-center w-full xl:col-start-2 padded-x">
+          <ContentRenderer :value="post">
+            <div class="pb-12">
               <div
                 class="mx-auto space-y-8"
                 ref="postContent"

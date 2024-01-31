@@ -30,7 +30,7 @@
         <BlogPostAuthor :published-at="post.publishedAt" />
       </div>
       <div
-        class="flex relative z-10 gap-8 flex-col items-start mx-auto w-full rounded-md max-w-[740px] pt-8 px-4"
+        class="flex relative z-10 gap-8 flex-col items-start mx-auto w-full rounded-md max-w-[740px] pt-8 padded-x"
       >
         <h1 class="text-4xl lg:text-5xl font-semibold font-[Oswald] lg:text-center">
           {{ post.title }}
