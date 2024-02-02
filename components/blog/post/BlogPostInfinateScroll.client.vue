@@ -3,9 +3,11 @@
 </template>
 
 <script setup lang="ts">
-const { getPostsOnScroll } = usePosts()
 // Infinate Post Scroll
 const sentinel = ref<HTMLElement | null>(null)
+
+// Trigger emit when sentinel is in view
+const emit = defineEmits(['infinate-trigger'])
 
 watchEffect((onCleanup) => {
   if (!sentinel.value) {
@@ -22,7 +24,7 @@ watchEffect((onCleanup) => {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(async (entry) => {
       if (entry.isIntersecting) {
-        await getPostsOnScroll()
+        emit('infinate-trigger')
       }
     })
   }, options)

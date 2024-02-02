@@ -7,7 +7,7 @@
         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8"
       >
         <BlogCard
-          v-for="post in postsShowcase[postCategory]"
+          v-for="post in postsShowcase"
           :key="`blog-showcase-${post.id}`"
           :post="post"
         />
@@ -21,7 +21,9 @@
 
 <script setup lang="ts">
 import type { TitleT } from '~/types/content'
-import type { PostCategoriesT, PostCardT, PostsInitializerT } from '~/types/posts'
+import type { QueryBuilderParams } from '@nuxt/content/dist/runtime/types'
+import type { PostCategoriesT, PostCardT } from '~/types/posts'
+import { POST_CARD_PROPERTIES } from '~/types/posts'
 
 const p = defineProps({
   title: {
@@ -34,29 +36,39 @@ const p = defineProps({
   }
 })
 
-const { categories } = useCatTag()
-const postsShowcase: PostsInitializerT = reactive(categories.initialize(() => <PostCardT[]>[]))
-const havePosts = computed(() => postsShowcase[p.postCategory].length > 0)
-
-const { getPosts } = usePosts()
+const postsShowcase: Ref<PostCardT[]> = ref([])
+const category = computed(() => p.postCategory)
+const havePosts = computed(() => postsShowcase.length > 0)
 
 // Fetch posts on server and client
-const { data: fetchedPosts, error } = await useAsyncData(
+const { error, pending } = await useAsyncData(
   `blog-showcase-${p.postCategory}`,
-  (): Promise<PostCardT[] | void> =>
-    getPosts({ limit: 3, skip: 0, category: p.postCategory, isShowcase: true })
+  async (): Promise<void> => {
+    const whereOptions: QueryBuilderParams = {
+      // tags: { $in: selectedTags.value },
+      status: { $eq: 'published' }
+    }
+
+    if (category.value !== 'all') {
+      whereOptions.category = category.value
+    }
+
+    const posts = (await queryContent('/blog')
+      .where(whereOptions)
+      .only(POST_CARD_PROPERTIES)
+      .sort({ publishedAt: -1 })
+      .limit(3)
+      .find()) as PostCardT[]
+
+    if (posts.length) {
+      postsShowcase.value.push(...posts)
+    }
+  }
 )
 
 if (error.value) {
   console.error('Fetch Posts Error:', error.value)
 }
-
-// Use the fetchedPosts for rendering, which will be consistent across server and client
-watchEffect(() => {
-  if (fetchedPosts.value) {
-    postsShowcase[p.postCategory] = fetchedPosts.value
-  }
-})
 </script>
 
 <style scoped></style>

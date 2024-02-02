@@ -1,14 +1,14 @@
 <template>
-  <div class="max-w-lg mx-auto border border-gray-300 rounded-lg overflow-hidden">
+  <div class="max-w-lg mx-auto overflow-hidden">
     <blockquote
-      class="instagram-media p-4"
+      class="instagram-media dark:invert p-4"
       :key="embedContainerKey"
       :data-instgrm-permalink="cleanUrl"
       data-instgrm-version="14"
       :data-instgrm-captioned="options.caption"
       data-width="100%"
       :style="{
-        background: themeColor,
+        background: '#000',
         border: 0,
         borderRadius: '3px',
         boxShadow: '0 0 1px 0 rgba(0, 0, 0, 0.5), 0 1px 10px 0 rgba(0, 0, 0, 0.15)',
@@ -16,7 +16,7 @@
         maxWidth: '540px',
         minWidth: '326px',
         padding: 0,
-        width: '99.375%'
+        width: '100%'
       }"
     >
       <div
@@ -30,10 +30,12 @@
 </template>
 
 <script setup lang="ts">
+const isDark = useColorMode().value === 'dark'
 const themeColor = computed(() => {
-  const isDark = useColorMode().value === 'dark'
   return isDark ? '#000' : '#fff'
 })
+
+console.log('isDark', isDark, themeColor.value)
 
 interface IgOptions {
   caption?: boolean
@@ -82,6 +84,8 @@ onMounted(() => {
   // Check if Instagram's script is loaded and instgrm object is available
   if (window.instgrm && window.instgrm.Embeds) {
     window.instgrm.Embeds.process()
+    console.log('igEmbed', window.instgrm)
+    // [Exception: TypeError: 'caller', 'callee', and 'arguments' properties may not be accessed on strict mode functions or the arguments objects for calls to them at Function.invokeGetter (<anonymous>:3:28)]
   }
 })
 
@@ -96,4 +100,17 @@ useHead({
 })
 </script>
 
-<style></style>
+<style scoped>
+.instagram-media {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.SocialProof {
+  background-color: aqua !important;
+}
+
+.Footer {
+  background-color: aqua !important;
+}
+</style>

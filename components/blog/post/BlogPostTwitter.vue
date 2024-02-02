@@ -1,14 +1,14 @@
 <template>
   <div class="twitter-embed-container flex justify-center items-center w-full">
     <blockquote
-      class="twitter-tweet mx-auto"
+      class="twitter-post mx-auto"
       data-media-max-width="560"
       :data-tweet-id="tweetId"
       :data-theme="theme"
       :data-lang="lang"
     >
       <!-- The content inside blockquote is a fallback and may not be displayed -->
-      <p>Loading tweet...</p>
+      <p>Loading tweet: {{ username }} {{ tweetId }}</p>
       <a :href="`https://twitter.com/${username}/status/${tweetId}`"></a>
     </blockquote>
   </div>
@@ -24,6 +24,9 @@ const p = defineProps({
     required: true
   }
 })
+
+const color = computed(() => useColorMode().value)
+console.log('twitterColor', color.value)
 
 const tweetId = computed(() => {
   const match = p.src.match(/status\/(\d+)/)
@@ -55,5 +58,7 @@ useHead({
 </script>
 
 <style scoped>
-/* Add any specific styles for your twitter embed container here */
+.twitter-post {
+  margin: 0 !important;
+}
 </style>

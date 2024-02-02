@@ -1,5 +1,5 @@
 <template>
-  <div ref="infinateBlogs">
+  <div>
     <CommonHero
       :img="{
         title: `${website.name} blog icon`,
@@ -23,18 +23,18 @@
       <BlogAdFloat />
 
       <div
-        v-if="postsLoaded"
+        v-if="allPosts.length > 0"
         class="grid md:gap-4 grid-cols-1 lg:gap-8 md:grid-cols-2 h-full"
       >
         <BlogCard
-          v-for="post in posts[categories.selected.lower.value]"
-          :key="`incubrain-${categories.selected.lower.value}-post-${post.id}`"
+          v-for="post in allPosts"
+          :key="`incubrain-${categoryParam}-post-${post.id}`"
           :post="post"
         />
         <ClientOnly>
-          <BlogCardSkeleton v-show="loading" />
-          <BlogCardSkeleton v-show="loading" />
-          <BlogCardSkeleton v-show="loading" />
+          <BlogCardSkeleton v-show="pending" />
+          <BlogCardSkeleton v-show="pending" />
+          <BlogCardSkeleton v-show="pending" />
           <div
             v-show="postsFinished"
             class="flex justify-center items-center w-full border border-primary-500 md:rounded-md background p-8"
@@ -48,29 +48,68 @@
         class="flex justify-center items-center w-full border border-primary-500 md:rounded-md background p-8"
       >
         <p class="foreground px-2">
-          {{ categories.selected.upperFirst.value }}
+          {{ categoryParam }}
           has no posts...
         </p>
       </div>
     </div>
-    <BlogPostInfinateScroll v-if="!postsFinished" />
+    <BlogPostInfinateScroll
+      v-show="!postsFinished && !pending"
+      @infinate-trigger="refresh"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import type { PostCategoriesT } from '~/types/posts'
-
-const { posts, getInitialPosts, postsLoading, postsFinished, postsLoaded } = usePosts()
-
-const loading = toRef(postsLoading)
+import type { PostCardT, PostCategoriesT } from '~/types/posts'
+import type { QueryBuilderParams } from '@nuxt/content/dist/runtime/types'
+import { POST_CARD_PROPERTIES } from '~/types/posts'
 
 const route = useRoute()
-const categoryParam = ref(String(route.params.category))
+const categoryParam = ref(String(route.params.category) as PostCategoriesT)
 
-const { categories } = useCatTag()
-categories.toggle(categoryParam.value as PostCategoriesT)
+const isServer = process.server
 
-await getInitialPosts()
+const allPosts = ref<PostCardT[]>([])
+const postsToFetch = 10
+const pagination = reactive({ skip: 0, limit: postsToFetch })
+
+const postsFinished = ref(false)
+
+const { error, refresh, pending } = useAsyncData(
+  `post-cards-${categoryParam.value}`,
+  async (): Promise<void> => {
+    console.log('fetching posts')
+    const whereOptions: QueryBuilderParams = {
+      // tags: { $in: selectedTags.value },
+      status: { $eq: 'published' }
+    }
+
+    if (categoryParam.value !== 'all') {
+      whereOptions.category = categoryParam.value
+    }
+
+    const posts = (await queryContent('/blog')
+      .where(whereOptions)
+      .only(POST_CARD_PROPERTIES)
+      .sort({ publishedAt: -1 })
+      .skip(pagination.skip)
+      .limit(pagination.limit)
+      .find()) as PostCardT[]
+
+    if (!posts.length || posts.length < postsToFetch) {
+      postsFinished.value = true
+      return
+    }
+    pagination.skip += postsToFetch
+    await new Promise((resolve) => setTimeout(resolve, 1200))
+    allPosts.value.push(...posts)
+  }
+)
+
+if (error.value) {
+  console.error('Error fetching posts:', error)
+}
 
 const { website, seo } = useInfo()
 if (website && seo) {
@@ -87,8 +126,8 @@ if (website && seo) {
   })
 
   defineOgImageComponent('OgImageDefault', {
-    title: `${website.name} ${categories.selected.upperFirst.value} Blogs`,
-    description: seo.blog[categories.selected.lower.value].description,
+    title: `${website.name} ${categoryParam.value} Blogs`,
+    description: seo.blog[categoryParam.value].description,
     image: `./${seo.image}`
   })
 }
