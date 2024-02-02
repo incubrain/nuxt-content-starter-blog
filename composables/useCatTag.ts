@@ -25,20 +25,6 @@ export default () => {
     }
   }
 
-  /**
-   * Toggle the selected tag in the filter.
-   * @param tag - The tag to toggle.
-   */
-
-  // function toggleTag(tag: PostTagsT) {
-  //   const index = selectedTags.value.indexOf(tag)
-  //   if (index < 0) {
-  //     selectedTags.value.push(tag)
-  //   } else {
-  //     selectedTags.value.splice(index, 1)
-  //   }
-  // }
-
   return {
     categories: {
       initialize: initializeCategories,

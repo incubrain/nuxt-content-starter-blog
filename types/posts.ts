@@ -1,9 +1,7 @@
 import { z } from 'zod'
 
 export const postStatusSchema = z.enum(['published', 'draft', 'unpublished', 'archived'])
-export const dateSchema = z
-  .string()
-  .datetime()
+export const dateSchema = z.string().datetime()
 
 const isUUID = (value: string): boolean => {
   const regex = /^[0-9a-f]{8}-[0-9a-f]{4}-[4][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
@@ -137,5 +135,4 @@ export const postFullSchema = postCardSchema.extend({
   _id: z.string()
 })
 export type PostFullT = z.infer<typeof postFullSchema>
-export type PostsInitializerT = Record<PostCategoriesT, PostCardT[]>
 export const POST_FULL_PROPERTIES = [...POST_CARD_PROPERTIES, 'body', '_id', 'version']
