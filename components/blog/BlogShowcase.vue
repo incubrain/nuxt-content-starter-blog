@@ -38,7 +38,7 @@ const p = defineProps({
 
 const postsShowcase: Ref<PostCardT[]> = ref([])
 const category = computed(() => p.postCategory)
-const havePosts = computed(() => postsShowcase.length > 0)
+const havePosts = computed(() => postsShowcase.value.length > 0)
 
 // Fetch posts on server and client
 const { error, pending } = await useAsyncData(
