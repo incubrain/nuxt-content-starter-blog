@@ -41,6 +41,9 @@
           >
             <p class="foreground px-2">No more posts...</p>
           </div>
+          <template #fallback>
+            <p>Loading posts...</p>
+          </template>
         </ClientOnly>
       </div>
       <div

@@ -16,8 +16,8 @@
             v-if="img.src"
             :src="img.src"
             :alt="img.alt"
-            :width="img.width ? img.width : 220"
-            :height="img.height ? img.height : 300"
+            :width="img.width ?? 220"
+            :height="img.height ?? 300"
             class="rounded-md"
             :class="invert ? 'dark:invert' : ''"
           />

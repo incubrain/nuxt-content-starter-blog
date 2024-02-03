@@ -35,7 +35,7 @@ const tweetId = computed(() => {
 
 const username = computed(() => {
   const match = p.src.match(/twitter.com\/([\w]+)/)
-  return match ? match[1] : ''
+  return match?[1] ?? ''
 })
 
 onMounted(() => {
