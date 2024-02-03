@@ -92,11 +92,11 @@ export async function calculateReadability(
     numSyllables,
     numComplexWords
   })
-  console.log('numWords', numWords)
-  console.log('numSentences', numSentences)
-  console.log('score', score)
-  console.log('complexWords', numComplexWords)
-  console.log('syllables', numSyllables)
+  console.log(formulaConfig.name, 'numWords', numWords)
+  console.log(formulaConfig.name, 'numSentences', numSentences)
+  console.log(formulaConfig.name, 'score', score)
+  console.log(formulaConfig.name, 'complexWords', numComplexWords)
+  console.log(formulaConfig.name, 'syllables', numSyllables)
 
   return score
 }
@@ -108,32 +108,26 @@ type RatingResult = {
 
 function getRatingAndMessage(score: number): RatingResult {
   if (score >= 90) {
-    return {
-      rating: 'Extremely Easy',
-      message:
-        'Content is very easy to read and understand. Suitable for a younger audience or non-native speakers.'
-    }
+    return { rating: '1st to 3rd Grade', message: 'Very easy to read. Best suited for ages 6-9.' }
   } else if (score >= 70) {
     return {
-      rating: 'Easy to Read',
-      message: 'Content is straightforward and accessible to most readers.'
+      rating: '4th to 6th Grade',
+      message: 'Easy to read. Conversational English for ages 9-12.'
     }
   } else if (score >= 50) {
     return {
-      rating: 'Fairly Difficult',
-      message: 'Content is somewhat challenging and may require focused reading.'
+      rating: '7th to 9th Grade',
+      message: 'Fairly difficult to read. Best suited for ages 12-15.'
     }
   } else if (score >= 30) {
     return {
-      rating: 'Difficult',
-      message:
-        'Content is challenging to read and understand. Suitable for readers with good command of the language or technical background.'
+      rating: '10th to 12th Grade',
+      message: 'Difficult to read. Best suited for ages 15-18.'
     }
   } else {
     return {
-      rating: 'Very Difficult',
-      message:
-        'Content is very challenging and likely requires specialized knowledge or higher education to comprehend.'
+      rating: 'College',
+      message: 'Very difficult to read. Best understood by college students and professionals.'
     }
   }
 }
