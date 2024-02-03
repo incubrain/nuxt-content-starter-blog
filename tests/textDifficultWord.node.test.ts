@@ -1,11 +1,33 @@
 import {
   countDifficultWords,
   isDifficultWord,
-  isTechnicalTerm
+  isTechnicalTerm,
+  isCommonWord,
+  countCommonWords
 } from '~/server/utils/text/textDifficultWord'
 import { describe, test, expect } from 'vitest'
 
 describe('Text Difficult Words Tests', () => {
+  describe('isCommonWord', () => {
+    test.each([
+      { word: 'the', expected: true },
+      { word: 'gobsmacked', expected: false },
+      { word: 'tidal', expected: false }
+    ])('return $expected for $word', ({ word, expected }) => {
+      const result = isCommonWord(word)
+      expect(result).toBe(expected)
+    })
+  })
+
+  describe('countCommonWords', () => {
+    test.each([
+      { words: ['the', 'cat', 'sat'], expected: 3 },
+      { words: ['quick', 'brown', 'jaguar'], expected: 2 }
+    ])('count these: $words as $expected', ({ words, expected }) => {
+      const result = countCommonWords(words)
+      expect(result).toBe(expected)
+    })
+  })
   // Test for isTechnicalTerm
   describe('isTechnicalTerm', () => {
     test('should identify technical terms correctly', () => {

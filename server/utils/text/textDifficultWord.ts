@@ -1,4 +1,14 @@
 import { getSyllableCount } from '../text/textSyllableCount'
+import dCWords from '../formulas/daleChallWordList.json'
+const daleChallWords = new Set(dCWords)
+
+export function isCommonWord(word: string) {
+  return daleChallWords.has(word.toLowerCase())
+}
+
+export function countCommonWords(words: string[]) {
+  return words.filter(isCommonWord).length
+}
 
 export const technicalTerms = new Set([
   'array',

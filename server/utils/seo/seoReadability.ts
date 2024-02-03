@@ -1,9 +1,7 @@
 import { processText } from '../text/textProcessing'
 import { splitSentences, splitWords } from '../text/textSplit'
-import { countDifficultWords } from '../text/textDifficultWord'
+import { countDifficultWords, countCommonWords } from '../text/textDifficultWord'
 import { countSyllables } from '../text/textSyllableCount'
-import dCWords from '../formulas/daleChallWordList.json'
-const daleChallWords = new Set(dCWords)
 
 type ReadabilityAlgorithms = 'fleschKincaid' | 'gunningFog' | 'daleChall'
 
@@ -59,14 +57,6 @@ export const readabilityFormulasConfig = {
     complexWordWeight: 1,
     adjustment: 0
   } as ReadabilityFormulaConfig
-}
-
-function isCommonWord(word: string) {
-  return daleChallWords.has(word.toLowerCase())
-}
-
-function countCommonWords(words: string[]) {
-  return words.filter(isCommonWord).length
 }
 
 export async function calculateReadability(
