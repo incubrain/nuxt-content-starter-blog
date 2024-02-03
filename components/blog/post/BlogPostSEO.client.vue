@@ -27,20 +27,26 @@
           </UBadge>
         </div>
         <div class="space-y-2 border-b border-color py-4">
-          <UMeter
-            size="md"
-            indicator
-            label="Keyword Score"
-            :value="warns.readability.score"
+          <div
+            v-for="alg in read.algorithms"
+            :key="`readability-with-{alg.name}`"
+            class="space-y-2"
           >
-            <template #indicator>
-              <div class="text-sm text-right"> Readability: {{ warns.readability.rating }} </div>
-            </template>
-            <template #label="{ value }">
-              <p class="text-sm"> {{ value.toFixed(2) }}% </p>
-            </template>
-          </UMeter>
-          <p> {{ warns.readability.message }}</p>
+            <UMeter
+              size="md"
+              indicator
+              label="Keyword Score"
+              :value="alg.score"
+            >
+              <template #indicator>
+                <div class="text-sm text-right"> {{ alg.name }}: {{ alg.rating }} </div>
+              </template>
+              <template #label="{ value }">
+                <p class="text-sm"> {{ value.toFixed(2) }}% </p>
+              </template>
+            </UMeter>
+            <p> {{ alg.message }}</p>
+          </div>
         </div>
         <div class="w-full space-y-4 border-b border-color py-4">
           <UMeter
@@ -153,6 +159,7 @@
 <script setup lang="ts">
 import type { PostFullT } from '~/types/posts'
 const warns = ref({})
+const read = ref({})
 const keywordData = ref({})
 
 const { params } = useRoute()
@@ -172,10 +179,7 @@ const p = defineProps({
 const haveHtml = computed(() => !!p.postHtml && p.postHtml.length > 0)
 // fetch
 
-const {
-  data: seoChecks,
-  error
-} = await useAsyncData(
+const { data: seoChecks, error } = await useAsyncData(
   `seo-check-${title.value}`,
   () =>
     $fetch('/api/seo-checks', {
@@ -198,9 +202,9 @@ if (error.value) console.error('SEO Error:', error.value)
 
 function formatKeywordData(data: any) {
   const { keywords, seoScore, headings, count, links, messages, readability } = data
+  read.value = readability
   keywordData.value = keywords
   warns.value = {
-    readability,
     seoScore,
     headings,
     count,
