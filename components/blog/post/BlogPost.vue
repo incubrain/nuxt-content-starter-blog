@@ -1,13 +1,16 @@
 <template>
-  <div v-if="post.body">
+  <div
+    v-if="post.body"
+    class="max-w-full"
+  >
     <main>
       <BlogPostHero :post="post" />
       <div
-        class="grid grid-cols-[minmax(300px,700px)] xl:grid-cols-[minmax(250px,1fr)_740px_minmax(250px,1fr)] xl:gap-8 pt-8 padded-x justify-center"
+        class="grid grid-cols-[minmax(300px,700px)] xl:grid-cols-[minmax(240px,1fr)_minmax(660px,740px)_minmax(240px,1fr)] xl:gap-8 pt-8 padded-x justify-center"
       >
-        <div class="xl:sticky xl:top-24 xl:left-0 w-full xl:col-start-1 pb-12 ">
+        <div class="w-full xl:col-start-1 pb-12">
           <BlogPostToc
-            class="background p-4 xl:p-0 rounded-md border border-color xl:border-none"
+            class="background p-4 xl:p-0 rounded-md border border-color xl:border-none xl:sticky xl:top-24 xl:left-0"
             :toc="post.body.toc.links"
             :updated-at="post.updatedAt"
             :version="post.version"
