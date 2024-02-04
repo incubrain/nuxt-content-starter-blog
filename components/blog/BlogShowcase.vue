@@ -2,6 +2,12 @@
   <div>
     <div class="space-y-6 lg:space-y-12">
       <CommonTitle :title="title" />
+      <p
+        class="text-sm lg:text-base bg-red-50 p-1 rounded-md"
+        v-if="message.length"
+      >
+        {{ message }}
+      </p>
       <div
         v-if="havePosts"
         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8"
@@ -24,6 +30,8 @@ import type { TitleT } from '~/types/content'
 import type { QueryBuilderParams } from '@nuxt/content/dist/runtime/types'
 import type { PostCategoriesT, PostCardT } from '~/types/posts'
 import { POST_CARD_PROPERTIES } from '~/types/posts'
+
+const message = ref('')
 
 const p = defineProps({
   title: {
@@ -62,6 +70,8 @@ const { error, pending } = await useAsyncData(
 
     if (posts.length) {
       postsShowcase.value.push(...posts)
+    } else {
+      message.value = 'No posts to load'
     }
   }
 )

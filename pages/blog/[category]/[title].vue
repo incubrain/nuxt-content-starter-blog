@@ -10,16 +10,17 @@
 import { POST_FULL_PROPERTIES } from '~/types/posts'
 import type { PostFullT } from '~/types/posts'
 
-const { params } = useRoute()
-const title = computed(() => String(params.title))
-const category = computed(() => String(params.category))
+const route = useRoute()
+const title = computed(() => String(route.params.title))
+const category = computed(() => String(route.params.category))
 const { website } = useInfo()
+
 const { error, data: post } = await useAsyncData(
   `post-${title.value}`,
   () =>
     queryContent('/blog', category.value)
       .only(POST_FULL_PROPERTIES)
-      .where({ _path: `/blog/${category.value}/${title.value}` })
+      .where({ _path: route.fullPath, status: { $eq: 'published' } })
       .findOne() as Promise<PostFullT>
 )
 

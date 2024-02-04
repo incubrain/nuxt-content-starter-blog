@@ -9,7 +9,7 @@
         color="primary"
         :aria-label="`${cat} posts`"
         :variant="categories.selected.lower.value === cat ? 'solid' : 'outline'"
-        :to="`/blog-${cat}`"
+        :to="`/blog/${cat}`"
         :label="cat"
         size="sm"
         class="cursor-pointer"
