@@ -26,7 +26,7 @@
     <ul class="flex h-full w-full items-center">
       <li
         v-for="page in pages"
-        :key="`nav-link-${page.id}`"
+        :key="`nav-link-${page.link}`"
         class="link-alt cursor-pointer justify-center hidden h-full lg:flex items-center px-4 tracking-normal relative"
         :class="route.fullPath.includes(page.link) ? ' link-active' : ''"
       >
@@ -54,6 +54,7 @@
           </NuxtLink>
           <template #item="{ item }">
             <NuxtLink
+              :id="`page-child-${item.label}`"
               :to="item.to"
               class="w-full flex justify-between items-center"
             >

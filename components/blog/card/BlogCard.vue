@@ -16,7 +16,7 @@
       quality="80"
     />
     <div class="flex flex-col gap-2 items-start w-full px-2 pt-2 justify-center">
-      <NuxtLink :to="`${post.category}/${post._path.split('/')[3]}`">
+      <NuxtLink :to="post._path">
         <h3 class="text-xl lg:text-xl font-bold">
           {{ post.title }}
         </h3>
@@ -38,7 +38,7 @@
     </div>
     <div class="w-full flex justify-end h-full items-end pt-2">
       <UButton
-        :to="`${post.category}/${post._path.split('/')[3]}`"
+        :to="post._path"
         color="white"
         variant="solid"
       >

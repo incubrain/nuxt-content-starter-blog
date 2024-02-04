@@ -41,8 +41,6 @@ defineProps({
 const badgeColor = (badge: PostCategoriesT | PostTagsT): string => {
   switch (badge) {
     // Categories
-    case 'all':
-      return 'rose' // Assuming a custom color in your Tailwind configuration
     case 'frontend':
       return 'primary'
     case 'backend':
