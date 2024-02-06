@@ -68,8 +68,6 @@ import { POST_CARD_PROPERTIES } from '~/types/posts'
 const route = useRoute()
 const categoryParam = ref(String(route.params.category) as PostCategoriesT)
 
-const isServer = process.server
-
 const allPosts = ref<PostCardT[]>([])
 const postsToFetch = 10
 const pagination = reactive({ skip: 0, limit: postsToFetch })
@@ -83,10 +81,6 @@ const { error, refresh, pending } = useAsyncData(
     const whereOptions: QueryBuilderParams = {
       // tags: { $in: selectedTags.value },
       status: { $eq: 'published' }
-    }
-
-    if (categoryParam.value !== 'all') {
-      whereOptions.category = categoryParam.value
     }
 
     const posts = (await queryContent('/blog')
