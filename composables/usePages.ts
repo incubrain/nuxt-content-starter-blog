@@ -31,17 +31,17 @@ const pages = ref([
     children: [
       {
         label: 'Blog Frontend',
-        icon: 'i-mdi-chevron-right',
+        icon: 'i-mdi-language-html5',
         to: '/blog/frontend'
       },
       {
         label: 'Blog Backend',
-        icon: 'i-mdi-chevron-right',
+        icon: 'i-mdi-database',
         to: '/blog/backend'
       },
       {
         label: 'Blog Projects',
-        icon: 'i-mdi-chevron-right',
+        icon: 'i-mdi-folder-multiple-outline',
         to: '/blog/projects'
       }
     ]
