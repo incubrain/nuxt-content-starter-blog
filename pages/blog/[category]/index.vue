@@ -82,9 +82,8 @@ const { error, refresh, pending } = useAsyncData(
     if (!posts.length || posts.length < pagination.limit) {
       postsFinished.value = true
     }
-    posts.filter((post) => isValidPost(post, postCardSchema))
+    posts.filter((post) => isValidPostCard(post))
 
-    // Validate posts
     pagination.skip += pagination.limit
     await new Promise((resolve) => setTimeout(resolve, 1200))
     allPosts.value.push(...posts)
@@ -96,12 +95,12 @@ if (error.value) {
   console.error('Error fetching posts:', error)
 }
 
-function isValidPost(post: PostCardT, schema: typeof postCardSchema): boolean {
+function isValidPostCard(post: PostCardT): boolean {
   try {
-    schema.parse(post)
+    postCardSchema.parse(post)
     return true
   } catch (error) {
-    console.error('Error parsing post:', error)
+    console.error(`Error parsing post: ${post.title}`, error)
     return false
   }
 }
