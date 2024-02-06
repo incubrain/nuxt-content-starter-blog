@@ -15,32 +15,11 @@
         class="cursor-pointer"
       />
     </div>
-    <!-- <div class="space-y-2">
-      <p class="text-xs">Tags:</p>
-      <div class="flex gap-2 flex-wrap">
-        <UButton
-          v-for="tag in tags"
-          :key="tag"
-          color="primary"
-          :variant="selectedTags.includes(tag) ? 'solid' : 'outline'"
-          :label="tag"
-          size="sm"
-          class="cursor-pointer"
-          :ui="{
-            font: 'font-semibold',
-            padding: {
-              sm: 'py-1 px-2',
-            }
-          }"
-          @click="postStore.toggleTag(tag)"
-        />
-      </div>
-    </div> -->
   </div>
 </template>
 
 <script setup lang="ts">
-import { CATEGORIES, TAGS } from '~/types/posts'
+import { CATEGORIES } from '~/types/posts'
 import type { PostCategoriesT } from '~/types/posts'
 
 const selectedCategory = ref<PostCategoriesT>(String(useRoute().params.category) as PostCategoriesT)
