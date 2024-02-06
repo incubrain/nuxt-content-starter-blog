@@ -13,7 +13,6 @@
         :label="upperFirstCategory(cat)"
         size="sm"
         class="cursor-pointer"
-        @click="toggleCategory(cat)"
       />
     </div>
     <!-- <div class="space-y-2">
@@ -44,14 +43,8 @@
 import { CATEGORIES, TAGS } from '~/types/posts'
 import type { PostCategoriesT } from '~/types/posts'
 
-const selectedCategory = ref<PostCategoriesT>('frontend')
+const selectedCategory = ref<PostCategoriesT>(String(useRoute().params.category) as PostCategoriesT)
 const upperFirstCategory = (cat: string) => cat.charAt(0).toUpperCase() + cat.slice(1)
-
-function toggleCategory(category: PostCategoriesT) {
-  if (selectedCategory.value !== category) {
-    selectedCategory.value = category
-  }
-}
 
 const { website } = useInfo()
 </script>

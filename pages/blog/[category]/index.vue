@@ -40,15 +40,6 @@
           </div>
         </ClientOnly>
       </div>
-      <div
-        v-if="!allPosts.length && !pending"
-        class="flex justify-center items-center w-full border border-primary-500 md:rounded-md background p-8"
-      >
-        <p class="foreground px-2">
-          {{ categoryParam }}
-          has no posts...
-        </p>
-      </div>
     </div>
     <BlogPostInfinateScroll
       v-show="!postsFinished && !pending"
