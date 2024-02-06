@@ -118,8 +118,7 @@ const route = useRoute()
 
 const navbarHidden = ref(false)
 
-const isBlogPage = () => {
-  // Adjust this regex to match the updated blog URL structure
+const isBlogPostPage = () => {
   const blogRegex = /^\/blog\/[^\/]+\/[^\/]+$/
   return blogRegex.test(route.path)
 }
@@ -129,8 +128,8 @@ onMounted(() => {
   window.addEventListener(
     'scroll',
     () => {
-      // Only hide navbar on specific pages
-      if (isBlogPage()) {
+      // Hide navbar onscroll
+      if (isBlogPostPage()) {
         const currentScroll = window.scrollY || document.documentElement.scrollTop
         if (currentScroll > lastScrollTop) {
           navbarHidden.value = true
