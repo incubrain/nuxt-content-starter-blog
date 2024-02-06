@@ -17,6 +17,11 @@
           :key="`blog-showcase-${post.id}`"
           :post="post"
         />
+        <ClientOnly>
+          <BlogCardSkeleton v-show="pending" />
+          <BlogCardSkeleton v-show="pending" />
+          <BlogCardSkeleton v-show="pending" />
+        </ClientOnly>
       </div>
       <div class="flex justify-end">
         <slot />
@@ -50,18 +55,14 @@ const havePosts = computed(() => postsShowcase.value.length > 0)
 
 // Fetch posts on server and client
 const { error, pending } = await useAsyncData(
-  `blog-showcase-${p.postCategory}`,
+  `blog-showcase-${category.value}`,
   async (): Promise<void> => {
     const whereOptions: QueryBuilderParams = {
       // tags: { $in: selectedTags.value },
       status: { $eq: 'published' }
     }
 
-    if (category.value !== 'all') {
-      whereOptions.category = category.value
-    }
-
-    const posts = (await queryContent('/blog')
+    const posts = (await queryContent('/blog', category.value)
       .where(whereOptions)
       .only(POST_CARD_PROPERTIES)
       .sort({ publishedAt: -1 })

@@ -1,7 +1,7 @@
 <template>
   <div class="space-y-10 wrapper padded-y padded-x">
     <h1>Blog Home</h1>
-    <BlogShowcase
+    <LazyBlogShowcase
       post-category="frontend"
       :title="{
         main: 'Latest Frontend Posts',
@@ -10,8 +10,8 @@
       }"
     >
       <UButton to="/blog/frontend">All Frontend Posts</UButton>
-    </BlogShowcase>
-    <BlogShowcase
+    </LazyBlogShowcase>
+    <LazyBlogShowcase
       post-category="backend"
       :title="{
         main: 'Latest Backend Posts',
@@ -20,8 +20,8 @@
       }"
     >
       <UButton to="/blog/backend">All Backend Posts</UButton>
-    </BlogShowcase>
-    <BlogShowcase
+    </LazyBlogShowcase>
+    <LazyBlogShowcase
       post-category="projects"
       :title="{
         main: 'Latest Projects Posts',
@@ -30,7 +30,7 @@
       }"
     >
       <UButton to="/blog/projects">All Project Posts</UButton>
-    </BlogShowcase>
+    </LazyBlogShowcase>
   </div>
 </template>
 
