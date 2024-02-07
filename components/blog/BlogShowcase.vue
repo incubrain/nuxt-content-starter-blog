@@ -2,6 +2,12 @@
   <div>
     <div class="space-y-6 lg:space-y-12">
       <CommonTitle :title="title" />
+      <p
+        class="text-sm lg:text-base bg-red-50 p-1 rounded-md"
+        v-if="message.length"
+      >
+        {{ message }}
+      </p>
       <div
         v-if="havePosts"
         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8"
@@ -11,6 +17,11 @@
           :key="`blog-showcase-${post.id}`"
           :post="post"
         />
+        <ClientOnly>
+          <BlogCardSkeleton v-show="pending" />
+          <BlogCardSkeleton v-show="pending" />
+          <BlogCardSkeleton v-show="pending" />
+        </ClientOnly>
       </div>
       <div class="flex justify-end">
         <slot />
@@ -24,6 +35,8 @@ import type { TitleT } from '~/types/content'
 import type { QueryBuilderParams } from '@nuxt/content/dist/runtime/types'
 import type { PostCategoriesT, PostCardT } from '~/types/posts'
 import { POST_CARD_PROPERTIES } from '~/types/posts'
+
+const message = ref('')
 
 const p = defineProps({
   title: {
@@ -42,18 +55,14 @@ const havePosts = computed(() => postsShowcase.value.length > 0)
 
 // Fetch posts on server and client
 const { error, pending } = await useAsyncData(
-  `blog-showcase-${p.postCategory}`,
+  `blog-showcase-${category.value}`,
   async (): Promise<void> => {
     const whereOptions: QueryBuilderParams = {
       // tags: { $in: selectedTags.value },
       status: { $eq: 'published' }
     }
 
-    if (category.value !== 'all') {
-      whereOptions.category = category.value
-    }
-
-    const posts = (await queryContent('/blog')
+    const posts = (await queryContent('/blog', category.value)
       .where(whereOptions)
       .only(POST_CARD_PROPERTIES)
       .sort({ publishedAt: -1 })
@@ -62,6 +71,8 @@ const { error, pending } = await useAsyncData(
 
     if (posts.length) {
       postsShowcase.value.push(...posts)
+    } else {
+      message.value = 'No posts to load'
     }
   }
 )

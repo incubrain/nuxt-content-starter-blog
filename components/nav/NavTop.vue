@@ -26,20 +26,13 @@
     <ul class="flex h-full w-full items-center">
       <li
         v-for="page in pages"
-        :key="page.id"
+        :key="`nav-link-${page.link}`"
         class="link-alt cursor-pointer justify-center hidden h-full lg:flex items-center px-4 tracking-normal relative"
         :class="route.fullPath.includes(page.link) ? ' link-active' : ''"
       >
-        <NuxtLink
-          v-if="!page.children?.length"
-          :to="page.link"
-          class="h-full flex justify-center items-center"
-        >
-          {{ page.title }}
-        </NuxtLink>
         <UDropdown
-          v-else
-          :items="Array(page.children!) || [[{}]]"
+          v-if="page.children?.length"
+          :items="[page.children]"
           class="z-50 h-full"
           mode="hover"
           :popper="{
@@ -61,10 +54,11 @@
           </NuxtLink>
           <template #item="{ item }">
             <NuxtLink
-              :to="item.link"
+              :id="`page-child-${item.label}`"
+              :to="item.to"
               class="w-full flex justify-between items-center"
             >
-              {{ item.title }}
+              {{ item.label }}
               <UIcon
                 :name="item.icon"
                 class="flex-shrink-0 h-4 w-4 ms-auto"
@@ -72,6 +66,13 @@
             </NuxtLink>
           </template>
         </UDropdown>
+        <NuxtLink
+          v-else
+          :to="page.link"
+          class="h-full flex justify-center items-center"
+        >
+          {{ page.title }}
+        </NuxtLink>
       </li>
     </ul>
     <div class="flex gap-4 justify-end items-center">
@@ -117,20 +118,18 @@ const route = useRoute()
 
 const navbarHidden = ref(false)
 
-const isBlogPage = () => {
-  // Adjust this regex to match the updated blog URL structure
-  const blogRegex = /^\/blog-[^\/]+\/[^\/]+$/
+const isBlogPostPage = () => {
+  const blogRegex = /^\/blog\/[^\/]+\/[^\/]+$/
   return blogRegex.test(route.path)
 }
-
 
 let lastScrollTop = 0
 onMounted(() => {
   window.addEventListener(
     'scroll',
     () => {
-      // Only hide navbar on specific pages
-      if (isBlogPage()) {
+      // Hide navbar onscroll
+      if (isBlogPostPage()) {
         const currentScroll = window.scrollY || document.documentElement.scrollTop
         if (currentScroll > lastScrollTop) {
           navbarHidden.value = true

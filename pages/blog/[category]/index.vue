@@ -22,10 +22,7 @@
     >
       <BlogAdFloat />
 
-      <div
-        v-if="allPosts.length > 0"
-        class="grid md:gap-4 grid-cols-1 lg:gap-8 md:grid-cols-2 h-full"
-      >
+      <div class="grid md:gap-4 grid-cols-1 lg:gap-8 md:grid-cols-2 h-full">
         <BlogCard
           v-for="post in allPosts"
           :key="`incubrain-${categoryParam}-post-${post.id}`"
@@ -36,7 +33,7 @@
           <BlogCardSkeleton v-show="pending" />
           <BlogCardSkeleton v-show="pending" />
           <div
-            v-show="postsFinished"
+            v-if="postsFinished"
             class="flex justify-center items-center w-full border border-primary-500 md:rounded-md background p-8"
           >
             <p class="foreground px-2">No more posts...</p>
@@ -45,15 +42,6 @@
             <p>Loading posts...</p>
           </template>
         </ClientOnly>
-      </div>
-      <div
-        v-else
-        class="flex justify-center items-center w-full border border-primary-500 md:rounded-md background p-8"
-      >
-        <p class="foreground px-2">
-          {{ categoryParam }}
-          has no posts...
-        </p>
       </div>
     </div>
     <BlogPostInfinateScroll
@@ -66,16 +54,13 @@
 <script setup lang="ts">
 import type { PostCardT, PostCategoriesT } from '~/types/posts'
 import type { QueryBuilderParams } from '@nuxt/content/dist/runtime/types'
-import { POST_CARD_PROPERTIES } from '~/types/posts'
+import { POST_CARD_PROPERTIES, postCardSchema } from '~/types/posts'
 
 const route = useRoute()
 const categoryParam = ref(String(route.params.category) as PostCategoriesT)
 
-const isServer = process.server
-
 const allPosts = ref<PostCardT[]>([])
-const postsToFetch = 10
-const pagination = reactive({ skip: 0, limit: postsToFetch })
+const pagination = reactive({ skip: 0, limit: 10 })
 
 const postsFinished = ref(false)
 
@@ -88,11 +73,7 @@ const { error, refresh, pending } = useAsyncData(
       status: { $eq: 'published' }
     }
 
-    if (categoryParam.value !== 'all') {
-      whereOptions.category = categoryParam.value
-    }
-
-    const posts = (await queryContent('/blog')
+    const posts = (await queryContent('/blog', categoryParam.value)
       .where(whereOptions)
       .only(POST_CARD_PROPERTIES)
       .sort({ publishedAt: -1 })
@@ -100,20 +81,34 @@ const { error, refresh, pending } = useAsyncData(
       .limit(pagination.limit)
       .find()) as PostCardT[]
 
-    if (!posts.length || posts.length < postsToFetch) {
+    // validate posts
+    if (!posts.length || posts.length < pagination.limit) {
       postsFinished.value = true
-      return
     }
-    pagination.skip += postsToFetch
+    posts.filter((post) => isValidPostCard(post))
+
+    pagination.skip += pagination.limit
     await new Promise((resolve) => setTimeout(resolve, 1200))
     allPosts.value.push(...posts)
   }
 )
 
+// Validation & Error Handling
 if (error.value) {
   console.error('Error fetching posts:', error)
 }
 
+function isValidPostCard(post: PostCardT): boolean {
+  try {
+    postCardSchema.parse(post)
+    return true
+  } catch (error) {
+    console.error(`Error parsing post: ${post.title}`, error)
+    return false
+  }
+}
+
+// SEO
 const { website, seo } = useInfo()
 if (website && seo) {
   useSeoMeta({

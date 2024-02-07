@@ -10,7 +10,7 @@
         post-category="frontend"
       >
         <UButton
-          to="/blog-all"
+          to="/blog/frontend"
           variant="outline"
         >
           View All
@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-const {website, seo } = useInfo()
+const { website, seo } = useInfo()
 
 const mainCTA = {
   label: 'Incubrain Blog Starter',

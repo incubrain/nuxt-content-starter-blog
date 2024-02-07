@@ -1,80 +1,83 @@
 <template>
-  <div
-    class="py-6 w-full flex flex-col justify-center items-center"
-    v-if="image.src"
-  >
-    <NuxtImg
-      :src="`images/blog/${params.category}/${image.src}`"
-      :alt="image.alt || `${website.name} Blog Post Image`"
-      width="700px"
-      height="400px"
-      class="rounded-md border border-color w-full cursor-pointer transition duration-500 ease-in-out transform hover:scale-105"
-      @click="isOpen = true"
-    />
-    <LazyBlogPostCaption v-if="hasCaption">
-      {{ image.caption }}
-    </LazyBlogPostCaption>
-    <UModal
-      v-model="isOpen"
-      fullscreen
-      :ui="{
-        background: '',
-        fullscreen: 'w-[minmax(300px,1400px)] h-auto'
-      }"
-    >
-      <div class="w-full h-auto rounded-md overflow-hidden background">
-        <NuxtImg
-          :src="`images/blog/${params.category}/${image.src}`"
-          :alt="image.alt || `${website.name} Blog Post Image`"
-          class="transition duration-500 ease-in-out"
-          width="1400px"
-          height="auto"
-        />
-        <LazyBlogPostCaption
-          v-if="hasCaption"
-          class="p-2"
-        >
-          {{ image.caption }}
-        </LazyBlogPostCaption>
+  <div class="py-6 w-full flex flex-col justify-center items-center">
+    <AppModal>
+      <template #base="{ toggleOpen }">
         <div
-          class="background p-4 rounded-full absolute top-4 right-4 flex justify-center items-center border border-color"
+          class="p-1 rounded-full background absolute top-4 right-4 flex justify-center items-center w-7 h-7 z-20 hover:transform hover:scale-110 transition-transform duration-300 ease-in-out"
         >
-          <UButton
-            variant="link"
-            class="absolute"
-            icon="i-mdi-close"
-            aria-label="Close image modal"
-            @click="isOpen = false" 
+          <UIcon
+            name="i-mdi-arrow-expand-all"
+            class="w-5 h-5 cursor-pointer absolute z-10 text-primary"
+            @click="toggleOpen"
           />
         </div>
-      </div>
-    </UModal>
+        <MediaImage
+          v-if="singleImage"
+          :image="processedImages[0]"
+        />
+        <MediaImageCarousel
+          v-else
+          :images="processedImages"
+        />
+      </template>
+      <template #modal>
+        <LazyMediaImage
+          v-if="singleImage"
+          :image="processedImages[0]"
+          :dimensions="{
+            width: 1400,
+            height: 800
+          }"
+        />
+        <LazyMediaImageCarousel
+          v-else
+          :images="processedImages"
+        />
+      </template>
+    </AppModal>
+    <BlogPostCaption v-if="hasCaption">
+      {{ caption }}
+    </BlogPostCaption>
   </div>
 </template>
 
 <script setup lang="ts">
-const { website } = useInfo()
-const { params } = useRoute()
+import type { ImageProps } from '~/types/inline'
 
-const isOpen = ref(false)
-
-type ImageProps = {
-  src: string
-  alt?: string
-  caption?: string
-  width?: number
-  height?: number
-}
-
-const p = defineProps({
-  image: {
-    type: Object as () => ImageProps,
-    required: true,
-    default: () => ({ src: '', alt: '', caption: '' })
+const props = defineProps({
+  images: {
+    type: Array as () => ImageProps[],
+    required: true
+  },
+  caption: {
+    type: String,
+    default: ''
   }
 })
 
-const hasCaption = computed(() => !!p.image.caption)
+const { params } = useRoute()
+const processedImages = computed(() => {
+  return props.images.map((image) => {
+    if (image.src.startsWith('http')) {
+      return image
+    } else {
+      return {
+        ...image,
+        src: `images/blog/${params.category}/${image.src}`
+      }
+    }
+  })
+})
+
+const hasCaption = computed(() => !!props.caption)
+
+const singleImage = computed(() => {
+  return props.images.length === 1
+})
+
+const image = computed(() => {
+  return props.images[0]
+})
 </script>
 
 <style></style>
