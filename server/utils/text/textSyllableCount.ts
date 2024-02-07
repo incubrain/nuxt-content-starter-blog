@@ -317,6 +317,8 @@ function one(value: string) {
   if (value.length === 0) return 0
   if (value.length < 3) return 1
 
+  value = value.replace(EXPRESSION_SINGLE, countFactory(1))
+
   if (value.length >= 5) {
     value = value
       .replace(EXPRESSION_TRIPLE, countFactory(3))

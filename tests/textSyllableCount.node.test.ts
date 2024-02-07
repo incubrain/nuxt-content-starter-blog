@@ -13,7 +13,8 @@ const sharedWordTestCases = [
   { input: 'the', expected: 1, message: 'Common word "the"' },
   { input: 'queue', expected: 1, message: 'Word "queue"' },
   { input: 'rhythm', expected: 2, message: 'Word "rhythm"' },
-  { input: 'ablatio', expected: 4, message: 'Word "ablatio"' }
+  { input: 'ablatio', expected: 4, message: 'Word "ablatio"' },
+  { input: 'sentence', expected: 2, message: 'Word "challenging"' }
 ]
 
 const sharedArrayWordTestCases = [
@@ -21,6 +22,11 @@ const sharedArrayWordTestCases = [
   { input: ['a'], expected: 1, message: 'Array with single letter "a"' },
   { input: ['testing'], expected: 2, message: 'Array with word "testing"' },
   { input: ['simple', 'example'], expected: 5, message: 'Array with words "simple example"' },
+  {
+    input: ['a', 'complex', 'sentence', 'with', 'challenging', 'words'],
+    expected: 10,
+    message: 'Array with complex words'
+  },
   {
     input: ['I', 'am', 'testing', 'different', 'syllables', 'here'],
     expected: 1 + 1 + 2 + 3 + 3 + 1,
@@ -33,14 +39,14 @@ const sharedArrayWordTestCases = [
 describe('Text Syllable Count Tests', () => {
   // Test for countSyllables
   describe('countSyllables', () => {
-    test.each(sharedArrayWordTestCases)('$message input: $input', async ({ input, expected }) => {
+    test.each(sharedArrayWordTestCases)('input: $input', async ({ input, expected }) => {
       expect(await countSyllables(input)).toBe(expected)
     })
   })
 
   describe('getSyllableCount', () => {
     // Define test cases
-    test.each(sharedWordTestCases)('$message input: $input', ({ input, expected }) => {
+    test.each(sharedWordTestCases)('input: $input', ({ input, expected }) => {
       expect(getSyllableCount(input)).toBe(expected)
     })
   })
