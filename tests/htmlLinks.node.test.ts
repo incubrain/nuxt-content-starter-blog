@@ -1,6 +1,13 @@
-import { describe, test, expect } from 'vitest';
-import { getAllLinks, isRelativeLink, isMailToLink, isInternalLink, getOutboundLinks, getInternalLinks } from '~/server/utils/html/htmlLinks';
-import { load } from 'cheerio';
+import { describe, test, expect } from 'vitest'
+import {
+  getAllLinks,
+  isRelativeLink,
+  isMailToLink,
+  isInternalLink,
+  getExternalLinks,
+  getInternalLinks
+} from '~/server/utils/html/htmlLinks'
+import { load } from 'cheerio'
 
 describe('HTML Links Processing Tests', () => {
   describe('getAllLinks Tests', () => {
@@ -17,56 +24,92 @@ describe('HTML Links Processing Tests', () => {
         html: '<a>No href</a>',
         expected: [],
         message: 'HTML with a tag without href'
-      },
+      }
       // Additional test cases can be added here
     ])('$message', ({ html, expected }) => {
-      const dom = load(html);
-      expect(getAllLinks(dom)).toEqual(expected);
-    });
-  });
+      const dom = load(html)
+      expect(getAllLinks(dom)).toEqual(expected)
+    })
+  })
 
   describe('Link Type Tests', () => {
     test.each([
-      { href: '/relative', expected: true, function: isRelativeLink, message: 'Relative link' },
-      { href: 'http://example.com', expected: false, function: isRelativeLink, message: 'Absolute URL' },
-      { href: 'mailto:test@example.com', expected: true, function: isMailToLink, message: 'Mailto link' },
-      { href: 'http://example.com', expected: false, function: isMailToLink, message: 'Non-mailto link' },
-      { href: 'http://localhost:3000/internal', expected: true, function: isInternalLink, message: 'Internal link in development' },
-      { href: 'https://nuxt-content-starter-blog.vercel.app/internal', expected: true, function: isInternalLink, message: 'Internal link in production' },
-      { href: 'http://external.com', expected: false, function: isInternalLink, message: 'External link' },
-      // Additional test cases can be added here
-    ])('$message', ({ href, expected, function }) => {
-      expect(function(String(href))).toBe(expected);
-    });
-  });
+      { input: '/relative', expected: true, func: isRelativeLink, message: 'Relative link' },
+      {
+        input: 'http://example.com',
+        expected: false,
+        func: isRelativeLink,
+        message: 'Absolute URL'
+      },
+      {
+        input: 'mailto:test@example.com',
+        expected: true,
+        func: isMailToLink,
+        message: 'Mailto link'
+      },
+      {
+        input: 'http://example.com',
+        expected: false,
+        func: isMailToLink,
+        message: 'Non-mailto link'
+      },
+      {
+        input: 'http://localhost:3000/internal',
+        expected: true,
+        func: isInternalLink,
+        message: 'Internal url'
+      },
+      {
+        input: 'http://external.com',
+        expected: false,
+        func: isInternalLink,
+        message: 'External link'
+      },
+      {
+        input: '#toc-link',
+        expected: true,
+        func: isInternalLink,
+        message: 'Internal Hash Link'
+      }
 
-  describe('getOutboundLinks and getInternalLinks Tests', () => {
+      // Additional test cases can be added here
+    ])('$input $message', ({ input, expected, func }) => {
+      expect(func(input)).toBe(expected)
+    })
+  })
+
+  describe('getExternalLinks and getInternalLinks Tests', () => {
     const allLinks = [
       { href: 'http://example.com', text: 'External' },
       { href: 'mailto:test@example.com', text: 'Mail' },
       { href: '/internal', text: 'Internal' },
-      { href: '/internal', text: 'Internal Duplicate' }
-    ];
+      { href: '/internal', text: 'Internal Duplicate' },
+      { href: '#toc-link', text: 'Internal Hash Link' }
+    ]
 
-    test('getOutboundLinks', () => {
+    test('getExternalLinks', () => {
       const expected = {
         all: [{ href: 'http://example.com', text: 'External' }],
         duplicate: [],
         unique: [{ href: 'http://example.com', text: 'External' }]
-      };
-      expect(getOutboundLinks(allLinks)).toEqual(expected);
-    });
+      }
+      expect(getExternalLinks(allLinks)).toEqual(expected)
+    })
 
     test('getInternalLinks', () => {
       const expected = {
         all: [
           { href: '/internal', text: 'Internal' },
-          { href: '/internal', text: 'Internal Duplicate' }
+          { href: '/internal', text: 'Internal Duplicate' },
+          { href: '#toc-link', text: 'Internal Hash Link' }
         ],
         duplicate: [{ href: '/internal', text: 'Internal Duplicate' }],
-        unique: [{ href: '/internal', text: 'Internal' }]
-      };
-      expect(getInternalLinks(allLinks)).toEqual(expected);
-    });
-  });
-});
+        unique: [
+          { href: '/internal', text: 'Internal' },
+          { href: '#toc-link', text: 'Internal Hash Link' }
+        ]
+      }
+      expect(getInternalLinks(allLinks)).toEqual(expected)
+    })
+  })
+})

@@ -7,10 +7,7 @@ import { LinksGroup } from '../interfaces'
  */
 
 // !todo make dynamic
-const siteDomainName =
-  process.env.NODE_ENV === 'development'
-    ? 'http://localhost:3000'
-    : 'https://nuxt-content-starter-blog.vercel.app/'
+const siteDomainName = 'http://localhost:3000'
 
 export function getAllLinks(dom: CheerioAPI): Link[] {
   const allLinks: Link[] = []
@@ -32,7 +29,7 @@ export function getAllLinks(dom: CheerioAPI): Link[] {
  */
 export function isRelativeLink(href: string): boolean {
   return (
-    href.startsWith('./') || href.startsWith('../') || href.startsWith('/') || href.startsWith('#')
+    href.startsWith('./') || href.startsWith('../') || href.startsWith('/') || !href.startsWith('#')
   )
 }
 
@@ -52,7 +49,7 @@ export function isMailToLink(href: string): boolean {
  */
 export function isInternalLink(href: string): boolean {
   return (
-    (siteDomainName && href.includes(siteDomainName) && href.startsWith('http://')) ||
+    (siteDomainName && href.startsWith(siteDomainName)) ||
     (isRelativeLink(href) && !isMailToLink(href))
   )
 }
@@ -61,7 +58,7 @@ export function isInternalLink(href: string): boolean {
  * Retrieves all outbound (external) links from the HTML content.
  * @returns An object of type LinksGroup containing arrays of all, duplicate, and unique outbound links.
  */
-export function getOutboundLinks(allLinks: Link[]): LinksGroup {
+export function getExternalLinks(allLinks: Link[]): LinksGroup {
   const outboundLinks = {
     all: [] as Link[],
     duplicate: [] as Link[],
@@ -69,13 +66,12 @@ export function getOutboundLinks(allLinks: Link[]): LinksGroup {
   }
 
   allLinks.forEach((link) => {
-    if (link.href && !isInternalLink(link.href)) {
-      outboundLinks.all.push(link)
-      if (!outboundLinks.unique.find((l) => l.href === link.href)) {
-        outboundLinks.unique.push(link)
-      } else {
-        outboundLinks.duplicate.push(link)
-      }
+    if (!link.href || isInternalLink(link.href)) return
+    outboundLinks.all.push(link)
+    if (!outboundLinks.unique.find((l) => l.href === link.href)) {
+      outboundLinks.unique.push(link)
+    } else {
+      outboundLinks.duplicate.push(link)
     }
   })
 
@@ -94,15 +90,27 @@ export function getInternalLinks(allLinks: Link[]): LinksGroup {
   }
 
   allLinks.forEach((link) => {
-    if (link.href && isInternalLink(link.href)) {
-      internalLinks.all.push(link)
-      if (!internalLinks.unique.find((l) => l.href === link.href)) {
-        internalLinks.unique.push(link)
-      } else {
-        internalLinks.duplicate.push(link)
-      }
+    if (!link.href || !isInternalLink(link.href)) return
+
+    internalLinks.all.push(link)
+    if (!internalLinks.unique.find((l) => l.href === link.href)) {
+      internalLinks.unique.push(link)
+    } else {
+      internalLinks.duplicate.push(link)
     }
   })
 
   return internalLinks
+}
+
+export function getLinks(links: Link[]) {
+  const internalLinks = getInternalLinks(links)
+  const externalLinks = getExternalLinks(links)
+
+  return {
+    links: {
+      internal: internalLinks,
+      external: externalLinks
+    }
+  }
 }

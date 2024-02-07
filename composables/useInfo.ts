@@ -8,7 +8,7 @@ const environment = process.env.NODE_ENV || 'development'
 const website = reactive({
   name: 'Website Name',
   nameSlug: 'website-name',
-  url: environment === 'development' ? 'http://localhost:3000/' : 'https://website-url.com',
+  url: environment === 'development' ? 'http://localhost:3000' : 'https://website-url.com',
   logo: 'website-logo.png',
   author: {
     name: 'Drew MacGibbon',

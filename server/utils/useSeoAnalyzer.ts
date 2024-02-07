@@ -42,7 +42,7 @@ export async function useSeoAnalyzer(
   const allLinks = link.getAllLinks(dom)
   const totalLinks = allLinks.length
   const internalLinks = link.getInternalLinks(allLinks)
-  const outboundLinks = link.getOutboundLinks(allLinks)
+  const outboundLinks = link.getExternalLinks(allLinks)
 
   // Assign SEO messages
 

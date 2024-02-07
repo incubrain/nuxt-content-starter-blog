@@ -14,5 +14,7 @@ export function getPureText(input: string) {
  */
 export function getWordCount(input: string): number {
   const content = input.toLowerCase()
+  // return 0 if empty string
+  if (!content) return 0
   return getPureText(content).split(' ').length
 }
