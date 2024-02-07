@@ -33,7 +33,6 @@ Beautifully designed blog post layouts to engage and captivate your audience.
 
 ## Upcoming Releases (To-Do)
 
-- [ ] Finish basic readability scorer.
 - [ ] Extract `ArticleSEO` to a Nuxt module.
 - [ ] Improve blog post UI.
 - [ ] Add inline markdown components for various platforms:

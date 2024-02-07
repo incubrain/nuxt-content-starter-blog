@@ -26,28 +26,6 @@
             <p>Words: {{ warns.count.words }}</p>
           </UBadge>
         </div>
-        <div class="space-y-2 border-b border-color py-4">
-          <div
-            v-for="alg in read.algorithms"
-            :key="`readability-with-{alg.name}`"
-            class="space-y-2"
-          >
-            <UMeter
-              size="md"
-              indicator
-              label="Keyword Score"
-              :value="alg.score"
-            >
-              <template #indicator>
-                <div class="text-sm text-right"> {{ alg.name }}: {{ alg.rating }} </div>
-              </template>
-              <template #label="{ value }">
-                <p class="text-sm"> {{ value.toFixed(2) }}% </p>
-              </template>
-            </UMeter>
-            <p> {{ alg.message }}</p>
-          </div>
-        </div>
         <div class="w-full space-y-4 border-b border-color py-4">
           <UMeter
             size="md"
@@ -159,7 +137,6 @@
 <script setup lang="ts">
 import type { PostFullT } from '~/types/posts'
 const warns = ref({})
-const read = ref({})
 const keywordData = ref({})
 
 const { params } = useRoute()
@@ -201,8 +178,7 @@ const { data: seoChecks, error } = await useAsyncData(
 if (error.value) console.error('SEO Error:', error.value)
 
 function formatKeywordData(data: any) {
-  const { keywords, seoScore, headings, count, links, messages, readability } = data
-  read.value = readability
+  const { keywords, seoScore, headings, count, links, messages } = data
   keywordData.value = keywords
   warns.value = {
     seoScore,

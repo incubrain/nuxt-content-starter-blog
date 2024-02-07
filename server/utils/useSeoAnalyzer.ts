@@ -2,7 +2,6 @@ import type { ContentJson, Heading, MessageData } from './interfaces'
 import { useKeywordDensity } from './seo/seoKeywordDensity'
 import { useSeoScoring } from './seo/seoScoring'
 import { useSeoMessages } from './seo/seoMessages'
-import { calculateAggregateReadabilityScore } from './seo/seoReadability'
 import { htmlDom } from './html/htmlDom'
 import * as head from './html/htmlHeadings'
 import * as link from './html/htmlLinks'
@@ -66,11 +65,7 @@ export async function useSeoAnalyzer(
   const keywordSeoScore = getKeywordSeoScore()
   keywords.score = keywordSeoScore
 
-  // Calculate aggregate readability score
-  const readability = await calculateAggregateReadabilityScore(baseContent.htmlText)
-
   return {
-    readability,
     seoScore,
     keywords,
     messages,
